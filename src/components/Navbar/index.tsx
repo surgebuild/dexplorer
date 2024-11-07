@@ -9,6 +9,7 @@ import {
   HStack,
   Icon,
   IconButton,
+  Img,
   Input,
   Modal,
   ModalBody,
@@ -40,8 +41,12 @@ import { useSelector } from 'react-redux'
 import { connectWebsocketClient, validateConnection } from '@/rpc/client'
 import { selectRPCAddress, selectTmClient } from '@/store/connectSlice'
 import { selectNewBlock } from '@/store/streamSlice'
+import { fetchBitcoinPriceDifference } from '@/utils'
 import { LS_RPC_ADDRESS, LS_RPC_ADDRESS_LIST } from '@/utils/constant'
 import { removeTrailingSlash } from '@/utils/helper'
+import { images } from '@/utils/images'
+
+import BitcoinPriceDifference from '../BitcoinPriceWidget'
 
 const heightRegex = /^\d+$/
 const txhashRegex = /^[A-Z\d]{64}$/
@@ -217,7 +222,7 @@ export default function Navbar() {
         display={'flex'}
         justifyContent={'flex-end'}
       >
-        Test
+        <BitcoinPriceDifference />
         {/* <HStack>
           <IconButton
             variant="ghost"

@@ -1,27 +1,28 @@
 import {
+  Box,
+  Button,
+  HStack,
+  Img,
+  Stack,
+  Table,
+  TableContainer,
+  Tbody,
+  Td,
+  Text,
+  Tfoot,
+  Th,
+  Thead,
+  Tr,
+  VStack,
+} from '@chakra-ui/react'
+
+import {
   capitalizeFirstLetter,
   getColor,
   getRelativeTime,
   truncate,
 } from '@/utils'
 import { images } from '@/utils/images'
-import {
-  Box,
-  Stack,
-  Text,
-  Table,
-  Thead,
-  Tbody,
-  Tfoot,
-  Tr,
-  Th,
-  Td,
-  TableContainer,
-  VStack,
-  HStack,
-  Img,
-  Button,
-} from '@chakra-ui/react'
 
 interface ITransactionList {
   title: string
@@ -32,7 +33,7 @@ export default function TransactionList({ title }: ITransactionList) {
     <Box
       py={10}
       border={'1px'}
-      borderColor={'border-gray-900'}
+      borderColor={'gray-900'}
       bg={'dark-bg'}
       borderRadius={12}
     >
@@ -72,7 +73,7 @@ export default function TransactionList({ title }: ITransactionList) {
                     px={2}
                     py={1}
                     color={'text-200'}
-                    bg={'border-gray-900'}
+                    bg={'gray-900'}
                     borderRadius={'full'}
                     align={'center'}
                   >
