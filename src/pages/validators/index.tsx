@@ -39,7 +39,12 @@ export default function Validators() {
             />
           </Skeleton>
         </GridItem>
-        <GridItem colSpan={9} bg={'pink'}></GridItem>
+        <GridItem
+          colSpan={9}
+          bg={'gray-900'}
+          opacity={'35%'}
+          borderRadius={'8px'}
+        ></GridItem>
       </Grid>
       <ValidatorsList title="All Validators" />
     </GradientBackground>

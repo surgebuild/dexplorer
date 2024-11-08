@@ -1,10 +1,24 @@
-import { Box, Grid, GridItem, Img, Skeleton, Text } from '@chakra-ui/react'
+import { InfoOutlineIcon } from '@chakra-ui/icons'
+import {
+  Box,
+  Grid,
+  GridItem,
+  Heading,
+  HStack,
+  Icon,
+  Img,
+  Skeleton,
+  Text,
+  Tooltip,
+  VStack,
+} from '@chakra-ui/react'
 import { StatusResponse } from '@cosmjs/tendermint-rpc'
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 
 import { BoxInfo } from '@/components/shared/BoxInfo'
 import GradientBackground from '@/components/shared/GradientBackground'
+import TransactionsChart from '@/components/shared/TpsChart'
 import TransactionList from '@/components/TransactionList'
 import { selectNewBlock } from '@/store/streamSlice'
 import { displayDate } from '@/utils/helper'
@@ -51,7 +65,36 @@ export default function Transactions() {
             />
           </Skeleton>
         </GridItem>
-        <GridItem colSpan={9} bg={'pink'}></GridItem>
+        <GridItem colSpan={9}>
+          <Box>
+            <VStack
+              bg={'gray-1000'}
+              borderRadius={12}
+              p={4}
+              pb={2}
+              border={'1px'}
+              h={'220px'}
+              borderColor={'gray-900'}
+              align={'flex-start'}
+            >
+              <HStack mb={'14px'}>
+                <Heading size={'xs'} color={'gray-500'} fontWeight={500}>
+                  Transactions
+                </Heading>
+                <Tooltip
+                  label={'tooltip text'}
+                  placement="right"
+                  bg="gray.300"
+                  color="black"
+                >
+                  <Icon as={InfoOutlineIcon} w={'13px'} color="gray-500" />
+                </Tooltip>
+              </HStack>
+
+              <TransactionsChart />
+            </VStack>
+          </Box>
+        </GridItem>
       </Grid>
       <TransactionList title="All Transactions" showAll={true} />
     </GradientBackground>
