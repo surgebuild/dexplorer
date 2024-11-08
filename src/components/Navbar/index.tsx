@@ -224,7 +224,7 @@ export default function Navbar() {
         alignItems={'center'}
       >
         <BitcoinPriceDifference />
-        <Box pl={3}>
+        <Box pl={5}>
           <Text
             fontSize={'md'}
             fontWeight={'medium'}

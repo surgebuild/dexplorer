@@ -57,16 +57,16 @@ export default function TransactionList({ title }: ITransactionList) {
               <Th>To</Th>
             </Tr>
           </Thead>
-          {transactionData.map((transaction, ind) => (
-            <Tbody key={ind} px={6}>
-              <Tr>
-                <Td
-                  sx={
-                    ind === transactionData.length - 1
-                      ? { borderBottom: 'none' }
-                      : {}
-                  }
-                >
+          <Tbody>
+            {transactionData.map((transaction, ind) => (
+              <Tr
+                key={ind}
+                px={6}
+                borderBottom={'1px'}
+                borderColor={'gray-900'}
+                _last={{ borderBottom: 'none' }}
+              >
+                <Td border={'none'}>
                   <HashComponent
                     txHash={transaction.txHash}
                     blockHeight={transaction.blockHeight}
@@ -74,13 +74,7 @@ export default function TransactionList({ title }: ITransactionList) {
                     time={transaction.time}
                   />
                 </Td>
-                <Td
-                  sx={
-                    ind === transactionData.length - 1
-                      ? { borderBottom: 'none' }
-                      : {}
-                  }
-                >
+                <Td border={'none'}>
                   <Text
                     fontSize={'xs'}
                     px={2}
@@ -93,13 +87,7 @@ export default function TransactionList({ title }: ITransactionList) {
                     {transaction.action}
                   </Text>
                 </Td>
-                <Td
-                  sx={
-                    ind === transactionData.length - 1
-                      ? { borderBottom: 'none' }
-                      : {}
-                  }
-                >
+                <Td border={'none'}>
                   <Box
                     display={'flex'}
                     gap={4}
@@ -112,21 +100,15 @@ export default function TransactionList({ title }: ITransactionList) {
                     <Img src={images.rightArrow.src} width={4} height={4} />
                   </Box>
                 </Td>
-                <Td
-                  sx={
-                    ind === transactionData.length - 1
-                      ? { borderBottom: 'none' }
-                      : {}
-                  }
-                >
+                <Td border={'none'}>
                   {' '}
                   <Text fontSize={'xs'} color={'text-link'}>
                     {truncate(transaction.toAddress)}
                   </Text>
                 </Td>
               </Tr>
-            </Tbody>
-          ))}
+            ))}
+          </Tbody>
         </Table>
       </TableContainer>
       <Box width={'full'} px={4}>
