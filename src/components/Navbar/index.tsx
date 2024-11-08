@@ -215,14 +215,29 @@ export default function Navbar() {
         bg={'dark-bg'}
         w="100%"
         py={5}
-        px={16}
+        px={14}
         shadow={'base'}
         borderBottom="1px"
         borderBottomColor={'gray-900'}
         display={'flex'}
         justifyContent={'flex-end'}
+        alignItems={'center'}
       >
         <BitcoinPriceDifference />
+        <Box pl={3}>
+          <Text
+            fontSize={'md'}
+            fontWeight={'medium'}
+            color={'text-200'}
+            px={6}
+            py={'10px'}
+            border={'1px'}
+            borderColor={'text-200'}
+            borderRadius={'full'}
+          >
+            Surge Testnet
+          </Text>
+        </Box>
         {/* <HStack>
           <IconButton
             variant="ghost"

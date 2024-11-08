@@ -31,7 +31,8 @@ interface ITransactionList {
 export default function TransactionList({ title }: ITransactionList) {
   return (
     <Box
-      py={10}
+      pt={10}
+      pb={5}
       border={'1px'}
       borderColor={'gray-900'}
       bg={'dark-bg'}
@@ -47,7 +48,7 @@ export default function TransactionList({ title }: ITransactionList) {
         {title}
       </Text>
       <TableContainer>
-        <Table variant="simple">
+        <Table>
           <Thead px={6}>
             <Tr>
               <Th>Transaction Hash</Th>
@@ -59,7 +60,13 @@ export default function TransactionList({ title }: ITransactionList) {
           {transactionData.map((transaction, ind) => (
             <Tbody key={ind} px={6}>
               <Tr>
-                <Td>
+                <Td
+                  sx={
+                    ind === transactionData.length - 1
+                      ? { borderBottom: 'none' }
+                      : {}
+                  }
+                >
                   <HashComponent
                     txHash={transaction.txHash}
                     blockHeight={transaction.blockHeight}
@@ -67,7 +74,13 @@ export default function TransactionList({ title }: ITransactionList) {
                     time={transaction.time}
                   />
                 </Td>
-                <Td>
+                <Td
+                  sx={
+                    ind === transactionData.length - 1
+                      ? { borderBottom: 'none' }
+                      : {}
+                  }
+                >
                   <Text
                     fontSize={'xs'}
                     px={2}
@@ -80,15 +93,32 @@ export default function TransactionList({ title }: ITransactionList) {
                     {transaction.action}
                   </Text>
                 </Td>
-                <Td>
-                  <Box display={'flex'} gap={4}>
+                <Td
+                  sx={
+                    ind === transactionData.length - 1
+                      ? { borderBottom: 'none' }
+                      : {}
+                  }
+                >
+                  <Box
+                    display={'flex'}
+                    gap={4}
+                    justifyContent={'space-between'}
+                    alignItems={'center'}
+                  >
                     <Text fontSize={'xs'} color={'text-link'}>
                       {truncate(transaction.fromAddress)}
                     </Text>
                     <Img src={images.rightArrow.src} width={4} height={4} />
                   </Box>
                 </Td>
-                <Td>
+                <Td
+                  sx={
+                    ind === transactionData.length - 1
+                      ? { borderBottom: 'none' }
+                      : {}
+                  }
+                >
                   {' '}
                   <Text fontSize={'xs'} color={'text-link'}>
                     {truncate(transaction.toAddress)}
