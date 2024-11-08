@@ -27,3 +27,14 @@ main {
   position: relative;
   padding-top: 112px;
 }
+
+.label_regular {
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 14.52px;
+}
+.label_medium {
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 14.52px;
+}
