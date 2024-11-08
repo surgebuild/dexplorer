@@ -33,7 +33,7 @@ export default function TransactionList({ title, showAll }: ITransactionList) {
   return (
     <Box
       pt={10}
-      pb={5}
+      pb={showAll ? 1 : 5}
       border={'1px'}
       borderColor={'gray-900'}
       bg={'dark-bg'}
