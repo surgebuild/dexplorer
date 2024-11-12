@@ -13,12 +13,11 @@ import router from 'next/router'
 import { useEffect, useMemo, useState } from 'react'
 
 import { getTotalInscriptions } from '@/rpc/query'
-import { BlockHeader } from '@/rpc/subscribeRecentBlocks'
 import { shortenAddress } from '@/utils/helper'
 import { images } from '@/utils/images'
 
 export default function RecentBlocks() {
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
   const [inscriptionData, setInscriptionData] = useState([])
 
   async function checkBitcoinData() {
@@ -29,8 +28,12 @@ export default function RecentBlocks() {
   }
 
   useEffect(() => {
+    setIsLoading(true)
     const intervalId = setInterval(checkBitcoinData, 15000)
-    return () => clearInterval(intervalId)
+    return () => {
+      clearInterval(intervalId)
+      setIsLoading(false)
+    }
   }, [])
 
   const recentBlocks = useMemo(() => {
@@ -45,7 +48,12 @@ export default function RecentBlocks() {
   return (
     <Box>
       <HStack justifyContent={'space-between'} mb={3}>
-        <Text fontWeight={'500'} fontSize={'16px'} lineHeight={'25px'}>
+        <Text
+          fontWeight={'500'}
+          color={'text-50'}
+          fontSize={'16px'}
+          lineHeight={'25px'}
+        >
           Recent Blocks
         </Text>
         <Text fontSize={'xs'} color={'gray-400'} pr={2} fontWeight={500}>
@@ -53,15 +61,15 @@ export default function RecentBlocks() {
         </Text>
       </HStack>
       <VStack gap={4} w={'100%'} mb={{ base: '18px', md: '38px' }}>
-        <Skeleton w={'100%'} isLoaded={!isLoading}>
-          {recentBlocks?.map((item: any) => (
-            <div key={item.revealTx || item.startBlock}>
-              <RecentBlock bitcoinData={item} />
-            </div>
-          ))}
-        </Skeleton>
+        {isLoading && (!recentBlocks || recentBlocks.length === 0) ? (
+          <Skeleton w={'100%'} height="340px" />
+        ) : (
+          recentBlocks?.map((item: any, key: number) => (
+            <RecentBlock key={key} bitcoinData={item} />
+          ))
+        )}
       </VStack>
-      {!isLoading && (
+      {recentBlocks && recentBlocks?.length > 0 && (
         <Box width={'full'}>
           <Button
             border={'1px'}
