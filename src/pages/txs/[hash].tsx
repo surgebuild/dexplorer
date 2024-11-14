@@ -237,7 +237,9 @@ export default function DetailBlock() {
                             Amount
                           </Text>
                         </Td>
-                        <Td color={'text-50'}>{amount}</Td>
+                        <Td color={'text-50'}>
+                          {getFee(txData?.authInfo?.fee?.amount)}
+                        </Td>
                       </Tr>
                       <Tr borderBottom="1px solid" borderColor="gray-900">
                         <Td pl={0} width={150} pt={3} pb={4}>
@@ -327,11 +329,11 @@ export default function DetailBlock() {
                       <Tr borderBottom="1px solid" borderColor="gray-900">
                         <Td pl={0} width={150} pt={3} pb={4}>
                           <Text className="body2_regular" color={'text-500'}>
-                            Fee
+                            {'Gas (used / wanted)'}
                           </Text>
                         </Td>
                         <Td pt={3} pb={4} color={'text-50'}>
-                          {getFee(txData?.authInfo?.fee?.amount)}
+                          {`(${tx?.gasUsed} / ${tx?.gasWanted})`}
                         </Td>
                       </Tr>
                       <Tr>
