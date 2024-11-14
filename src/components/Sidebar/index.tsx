@@ -19,7 +19,7 @@ import { useRouter } from 'next/router'
 import React, { ReactNode, useEffect, useState } from 'react'
 import { IconType } from 'react-icons'
 import { FaGlobeAmericas } from 'react-icons/fa'
-import { FiMenu } from 'react-icons/fi'
+import { FiBox, FiMenu } from 'react-icons/fi'
 import { GiTwoCoins } from 'react-icons/gi'
 import { HiOutlineUsers } from 'react-icons/hi2'
 import { IoLogoGithub, IoLogoTwitter } from 'react-icons/io'
@@ -45,6 +45,7 @@ interface RefLinkItemProps {
 }
 const LinkItems: Array<LinkItemProps> = [
   { name: 'Home', icon: MdOutlineHome, route: '/' },
+  { name: 'Blocks', icon: FiBox, route: '/blocks' },
   { name: 'Transactions', icon: GiTwoCoins, route: '/txs' },
   { name: 'Validators', icon: HiOutlineUsers, route: '/validators' },
   { name: 'Signers', icon: FaGlobeAmericas, route: '/signer' },
