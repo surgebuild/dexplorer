@@ -42,13 +42,30 @@ interface ITransactionList {
   title: string
   showAll: boolean
   txs: any
+  page: number
+  setPage: (page: number) => void
+  totalTxs: number
 }
 
 export default function TransactionList({
   title,
   showAll,
   txs,
+  page = 1,
+  setPage,
+  totalTxs,
 }: ITransactionList) {
+  const handlePreviousPage = () => {
+    if (page > 1) {
+      setPage!(page - 1)
+    }
+  }
+
+  const handleNextPage = () => {
+    if (page < totalTxs / 20) {
+      setPage!(page + 1)
+    }
+  }
   return (
     <Box
       pt={10}
@@ -103,6 +120,7 @@ export default function TransactionList({
                       | null
                       | undefined
                     Timestamp: { toISOString: () => string }
+                    status: number
                     fees: any
                     feeValue: any
                   },
@@ -126,7 +144,7 @@ export default function TransactionList({
                       </Link>
                     </Td>
                     <Td border={'none'}>
-                      {transaction.TxEvent.result.code == 0 ? (
+                      {transaction.status == 0 ? (
                         <Tag variant="subtle" colorScheme="green">
                           <TagLeftIcon as={FiCheck} />
                           <TagLabel fontSize={{ base: 'xs', md: 'sm' }}>
@@ -169,7 +187,7 @@ export default function TransactionList({
                         fontSize={{ base: 'xs', md: 'sm' }}
                         color={'text-link'}
                       >
-                        {timeFromNow(transaction.Timestamp.toISOString())}
+                        {getRelativeTime(String(transaction.Timestamp))}
                       </Text>
                     </Td>
                   </Tr>
@@ -211,6 +229,42 @@ export default function TransactionList({
           >
             See all transactions
           </Button>
+        </Box>
+      )}
+      {showAll && txs.length > 18 && (
+        <Box display={'flex'} justifyContent={'center'}>
+          <HStack
+            justifyContent="space-between"
+            alignSelf={''}
+            mt={4}
+            px={6}
+            pb={4}
+            width={'50%'}
+          >
+            <Button
+              onClick={handlePreviousPage}
+              disabled={page === 1}
+              size="sm"
+              variant="outline"
+              colorScheme="#f4431c"
+              color={'#f4431c'}
+            >
+              Previous
+            </Button>
+            <Text>
+              Page {page} of {(totalTxs / 20).toFixed(0)}
+            </Text>
+            <Button
+              onClick={handleNextPage}
+              disabled={page === totalTxs / 20}
+              size="sm"
+              variant="outline"
+              colorScheme="#f4431c"
+              color={'#f4431c'}
+            >
+              Next
+            </Button>
+          </HStack>
         </Box>
       )}
     </Box>
@@ -277,39 +331,3 @@ const HashComponent = ({
 const Dot = () => {
   return <Box minW={'2px'} minH={'2px'} bg={'gray.300'} rounded="full" mx={1} />
 }
-
-const transactionData = [
-  {
-    txHash: '0x1234567890abcdef1234567890abcdef12345678',
-    blockHeight: 53287,
-    txStatus: 'success',
-    time: '2024-11-07T10:20:00Z',
-    action: 'Router Swap',
-    fromAddress: '0x1234567890abcdef1234567890abcdef12345678',
-    toAddress: '0xabcdef1234567890abcdef1234567890abcdef12',
-    fees: '123 sats/byte',
-    feeValue: '$1.03',
-  },
-  {
-    txHash: '0xabcdef1234567890abcdef1234567890abcdef12',
-    blockHeight: 53288,
-    txStatus: 'pending',
-    time: '2024-11-07T12:15:00Z',
-    action: 'Token Transfer',
-    fromAddress: '0xabcdef1234567890abcdef1234567890abcdef12',
-    toAddress: '0x7890abcdef1234567890abcdef1234567890abcd',
-    fees: '123 sats/byte',
-    feeValue: '$1.03',
-  },
-  {
-    txHash: '0x7890abcdef1234567890abcdef1234567890abcd',
-    blockHeight: 53289,
-    txStatus: 'error',
-    time: '2024-11-07T14:30:00Z',
-    action: 'Contract Call',
-    fromAddress: '0x7890abcdef1234567890abcdef1234567890abcd',
-    toAddress: '0xabcdef1234567890abcdef1234567890abcdef12',
-    fees: '123 sats/byte',
-    feeValue: '$1.03',
-  },
-]

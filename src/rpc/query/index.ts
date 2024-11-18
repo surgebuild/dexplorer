@@ -97,20 +97,111 @@ export async function getTotalInscriptions() {
   }
 }
 
+// export async function getTxsByRestApi(restEndpoint: string, searchParams: any) {
+//   try {
+//     const response = await fetch(
+//       `${restEndpoint}/cosmos/tx/v1beta1/txs?${new URLSearchParams(
+//         searchParams
+//       )}`
+//     )
+//     if (!response.ok) {
+//       throw new Error(`HTTP error! status: ${response.status}`)
+//     }
+//     const data = await response.json()
+//     return data.tx_responses
+//   } catch (error) {
+//     console.error('Error fetching transactions:', error)
+//     return []
+//   }
+// }
+
 export async function getTxsByRestApi(restEndpoint: string, searchParams: any) {
   try {
     const response = await fetch(
-      `${restEndpoint}/cosmos/tx/v1beta1/txs?${new URLSearchParams(
-        searchParams
-      )}`
+      `${restEndpoint}/tx_search?${new URLSearchParams(searchParams)}`,
+      {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+        },
+      }
     )
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`)
     }
     const data = await response.json()
-    return data.tx_responses
+    return {
+      txData: data.result ? data.result.txs : [],
+      txsCount: data.result ? data.result.total_count : 0,
+    }
   } catch (error) {
     console.error('Error fetching transactions:', error)
-    return []
+    return { txData: [], txsCount: 0 }
+  }
+}
+export async function getBlocksByRestApi(
+  restEndpoint: string,
+  searchParams: any
+) {
+  try {
+    const response = await fetch(
+      `${restEndpoint}/block_search?${new URLSearchParams(searchParams)}`,
+      {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+        },
+      }
+    )
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
+    const data = await response.json()
+    return {
+      blocksData: data.result ? data.result.blocks : [],
+      blocksCount: data.result ? data.result.total_count : 0,
+    }
+  } catch (error) {
+    console.error('Error fetching transactions:', error)
+    return { blocksData: [], blocksCount: 0 }
+  }
+}
+
+export async function getBlockDetails(restEndpoint: string, height: string) {
+  try {
+    const response = await fetch(`${restEndpoint}/block?height=${height}`, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+      },
+    })
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`)
+    }
+
+    const data = await response.json()
+    return data.result?.block ?? null
+  } catch (error) {
+    console.error('Error fetching block details:', error)
+    return null
+  }
+}
+
+//getting individual timestamp for each transaction
+export const getTxTimeStamp = async (blockHeight: string) => {
+  try {
+    const blockDetail = await getBlockDetails(
+      'https://rpc.devnet.surge.dev',
+      blockHeight
+    )
+
+    if (!blockDetail || !blockDetail.header) {
+      throw new Error('Invalid block details received.')
+    }
+    return blockDetail.header.time
+  } catch (error) {
+    console.error('Error fetching block details in txTimeStamp:', error)
+    throw error
   }
 }

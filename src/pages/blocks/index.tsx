@@ -32,6 +32,8 @@ import { useEffect, useState } from 'react'
 import { FiCheck, FiChevronRight, FiHome, FiX } from 'react-icons/fi'
 import { useSelector } from 'react-redux'
 
+import GradientBackground from '@/components/shared/GradientBackground'
+import { getBlocksByRestApi } from '@/rpc/query'
 import { selectNewBlock, selectTxEvent } from '@/store/streamSlice'
 import { getTypeMsg, timeFromNow, trimHash } from '@/utils/helper'
 
@@ -47,8 +49,6 @@ export default function Blocks() {
   const txEvent = useSelector(selectTxEvent)
   const [blocks, setBlocks] = useState<NewBlockEvent[]>([])
 
-  const [txs, setTxs] = useState<Tx[]>([])
-
   useEffect(() => {
     if (newBlock) {
       updateBlocks(newBlock)
@@ -56,10 +56,53 @@ export default function Blocks() {
   }, [newBlock])
 
   useEffect(() => {
-    if (txEvent) {
-      updateTxs(txEvent)
+    const fetchBlocks = async () => {
+      const restEndpoint = 'https://rpc.devnet.surge.dev'
+      const searchParams = {
+        query: `"block.height>0"`,
+        per_page: '20',
+        page: `${1}`,
+        order_by: `"desc"`,
+      }
+
+      try {
+        const { blocksData } = await getBlocksByRestApi(
+          restEndpoint,
+          searchParams
+        )
+        console.log(blocksData, 'blocksData')
+        const formattedBlocks = blocksData.map((block: any) => {
+          return {
+            height: block.block.header.height,
+            hash: block.block.header.app_hash,
+            Timestamp: block.block.header.time,
+            txCount: block.block.data.txs.length,
+          }
+        })
+        console.log(formattedBlocks, 'formatted blocks')
+        // setBlocks(blocksData)
+        // const formattedTxs = await Promise.all(
+        //   txData.map(async (tx: any) => {
+        //     const timestamp = await getTxTimeStamp(tx.height) // Resolve each timestamp
+        //     return {
+        //       hash: tx.hash,
+        //       height: tx.height,
+        //       Timestamp: timestamp, // Use resolved timestamp here
+        //       status: tx.tx_result.code,
+        //     }
+        //   })
+        // )
+        // setApiTxs(formattedTxs)
+        // setTxs(formattedTxs)
+        // setTotalTxs(txsCount)
+        // console.log(formattedTxs, 'formattedTxs')
+      } catch (error) {
+        console.error('Error fetching transactions from REST API:', error)
+      }
     }
-  }, [txEvent])
+
+    fetchBlocks()
+  }, [])
 
   const updateBlocks = (block: NewBlockEvent) => {
     if (blocks.length) {
@@ -68,23 +111,6 @@ export default function Blocks() {
       }
     } else {
       setBlocks([block])
-    }
-  }
-
-  const updateTxs = (txEvent: TxEvent) => {
-    const tx = {
-      TxEvent: txEvent,
-      Timestamp: new Date(),
-    }
-    if (txs.length) {
-      if (
-        txEvent.height >= txs[0].TxEvent.height &&
-        txEvent.hash != txs[0].TxEvent.hash
-      ) {
-        setTxs((prevTx) => [tx, ...prevTx.slice(0, MAX_ROWS - 1)])
-      }
-    } else {
-      setTxs([tx])
     }
   }
 
@@ -120,178 +146,60 @@ export default function Blocks() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="block_main">
-        <HStack h="24px">
-          <Heading size={'md'}>Blocks</Heading>
-          <Divider borderColor={'gray'} size="10px" orientation="vertical" />
-          <Link
-            as={NextLink}
-            href={'/'}
-            style={{ textDecoration: 'none' }}
-            _focus={{ boxShadow: 'none' }}
-            display="flex"
-            justifyContent="center"
-          >
-            <Icon
-              fontSize="16"
-              color={useColorModeValue('light-theme', 'dark-theme')}
-              as={FiHome}
-            />
-          </Link>
-          <Icon fontSize="16" as={FiChevronRight} />
-          <Text>Blocks</Text>
-        </HStack>
-        <Box
-          mt={8}
-          // bg={useColorModeValue('light-container', 'dark-container')}
-          bg={'dark-bg'}
-          border={'1px'}
-          shadow={'base'}
-          borderRadius={4}
-          p={4}
-        >
-          <Tabs variant="unstyled">
-            <TabList>
-              <Tab
-                _selected={{
-                  color: 'white',
-                  bg: useColorModeValue('light-theme', 'dark-theme'),
-                }}
-                borderRadius={5}
-              >
-                Blocks
-              </Tab>
-              <Tab
-                _selected={{
-                  color: 'white',
-                  bg: useColorModeValue('light-theme', 'dark-theme'),
-                }}
-                borderRadius={5}
-              >
-                Transactions
-              </Tab>
-            </TabList>
-            <TabPanels>
-              <TabPanel>
-                <Box
-                  mt={8}
-                  bg={'dark-bg'}
-                  borderRadius={4}
-                  border={'1px'}
-                  borderColor={'gray-900'}
-                >
-                  <TableContainer>
-                    <Table variant="simple">
-                      <Thead>
-                        <Tr>
-                          <Th>
-                            <b>Height</b>
-                          </Th>
-                          <Th>App Hash</Th>
-                          <Th>Txs</Th>
-                          <Th>Time</Th>
-                        </Tr>
-                      </Thead>
-                      <Tbody>
-                        {blocks.map((block) => (
-                          <Tr key={block.header.height}>
-                            <Td>
-                              <Link
-                                as={NextLink}
-                                href={'/blocks/' + block.header.height}
-                                style={{ textDecoration: 'none' }}
-                                _focus={{ boxShadow: 'none' }}
-                              >
-                                <Text
-                                  color={useColorModeValue(
-                                    'light-theme',
-                                    'dark-theme'
-                                  )}
-                                >
-                                  {block.header.height}
-                                </Text>
-                              </Link>
-                            </Td>
-                            <Td noOfLines={1}>{toHex(block.header.appHash)}</Td>
-                            <Td>{block.txs.length}</Td>
-                            <Td>
-                              {timeFromNow(block.header.time.toISOString())}
-                            </Td>
-                          </Tr>
-                        ))}
-                      </Tbody>
-                    </Table>
-                  </TableContainer>
-                </Box>
-              </TabPanel>
-              <TabPanel>
-                <Box
-                  mt={8}
-                  bg={'dark-bg'}
-                  borderRadius={4}
-                  border={'1px'}
-                  borderColor={'gray-900'}
-                >
-                  <TableContainer>
-                    <Table variant="simple">
-                      <Thead>
-                        <Tr>
-                          <Th>Tx Hash</Th>
-                          <Th>Result</Th>
-                          <Th>Messages</Th>
-                          <Th>Height</Th>
-                          <Th>Time</Th>
-                        </Tr>
-                      </Thead>
-                      <Tbody>
-                        {txs.map((tx) => (
-                          <Tr key={toHex(tx.TxEvent.hash)}>
-                            <Td>
-                              <Link
-                                as={NextLink}
-                                href={
-                                  '/txs/' + toHex(tx.TxEvent.hash).toUpperCase()
-                                }
-                                style={{ textDecoration: 'none' }}
-                                _focus={{ boxShadow: 'none' }}
-                              >
-                                <Text
-                                  color={useColorModeValue(
-                                    'light-theme',
-                                    'dark-theme'
-                                  )}
-                                >
-                                  {trimHash(tx.TxEvent.hash)}
-                                </Text>
-                              </Link>
-                            </Td>
-                            <Td>
-                              {tx.TxEvent.result.code == 0 ? (
-                                <Tag variant="subtle" colorScheme="green">
-                                  <TagLeftIcon as={FiCheck} />
-                                  <TagLabel>Success</TagLabel>
-                                </Tag>
-                              ) : (
-                                <Tag variant="subtle" colorScheme="red">
-                                  <TagLeftIcon as={FiX} />
-                                  <TagLabel>Error</TagLabel>
-                                </Tag>
+      <Box>
+        <GradientBackground title="Blocks">
+          <Box>
+            <Box
+              mt={8}
+              bg={'dark-bg'}
+              borderRadius={4}
+              border={'1px'}
+              borderColor={'gray-900'}
+            >
+              <TableContainer>
+                <Table variant="simple">
+                  <Thead>
+                    <Tr>
+                      <Th>
+                        <b>Height</b>
+                      </Th>
+                      <Th>App Hash</Th>
+                      <Th>Txs</Th>
+                      <Th>Time</Th>
+                    </Tr>
+                  </Thead>
+                  <Tbody>
+                    {blocks.map((block) => (
+                      <Tr key={block.header.height}>
+                        <Td>
+                          <Link
+                            as={NextLink}
+                            href={'/blocks/' + block.header.height}
+                            style={{ textDecoration: 'none' }}
+                            _focus={{ boxShadow: 'none' }}
+                          >
+                            <Text
+                              color={useColorModeValue(
+                                'light-theme',
+                                'dark-theme'
                               )}
-                            </Td>
-                            <Td>{renderMessages(tx.TxEvent.result.data)}</Td>
-                            <Td>{tx.TxEvent.height}</Td>
-                            <Td>{timeFromNow(tx.Timestamp.toISOString())}</Td>
-                          </Tr>
-                        ))}
-                      </Tbody>
-                    </Table>
-                  </TableContainer>
-                </Box>
-              </TabPanel>
-            </TabPanels>
-          </Tabs>
-        </Box>
-      </main>
+                            >
+                              {block.header.height}
+                            </Text>
+                          </Link>
+                        </Td>
+                        <Td noOfLines={1}>{toHex(block.header.appHash)}</Td>
+                        <Td>{block.txs.length}</Td>
+                        <Td>{timeFromNow(block.header.time.toISOString())}</Td>
+                      </Tr>
+                    ))}
+                  </Tbody>
+                </Table>
+              </TableContainer>
+            </Box>
+          </Box>
+        </GradientBackground>
+      </Box>
     </>
   )
 }
