@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Divider,
   Heading,
   HStack,
@@ -35,22 +36,32 @@ import { useSelector } from 'react-redux'
 import GradientBackground from '@/components/shared/GradientBackground'
 import { getBlocksByRestApi } from '@/rpc/query'
 import { selectNewBlock, selectTxEvent } from '@/store/streamSlice'
+import { getRelativeTime } from '@/utils'
 import { getTypeMsg, timeFromNow, trimHash } from '@/utils/helper'
 
-const MAX_ROWS = 20
+const MAX_ROWS = 30
 
 interface Tx {
   TxEvent: TxEvent
   Timestamp: Date
 }
 
+interface BlockTx extends NewBlockEvent {
+  height: number
+  appHash: string
+  Timestamp: string
+  txCount: number
+}
+
 export default function Blocks() {
   const newBlock = useSelector(selectNewBlock)
   const txEvent = useSelector(selectTxEvent)
-  const [blocks, setBlocks] = useState<NewBlockEvent[]>([])
+  const [blocks, setBlocks] = useState<any[]>([])
+  const [page, setPage] = useState(1)
+  const [totalBlocks, setTotalBlocks] = useState(0)
 
   useEffect(() => {
-    if (newBlock) {
+    if (newBlock && page == 1) {
       updateBlocks(newBlock)
     }
   }, [newBlock])
@@ -60,54 +71,47 @@ export default function Blocks() {
       const restEndpoint = 'https://rpc.devnet.surge.dev'
       const searchParams = {
         query: `"block.height>0"`,
-        per_page: '20',
-        page: `${1}`,
+        per_page: '30',
+        page: `${page}`,
         order_by: `"desc"`,
       }
 
       try {
-        const { blocksData } = await getBlocksByRestApi(
+        const { blocksData, blocksCount } = await getBlocksByRestApi(
           restEndpoint,
           searchParams
         )
-        console.log(blocksData, 'blocksData')
         const formattedBlocks = blocksData.map((block: any) => {
           return {
             height: block.block.header.height,
-            hash: block.block.header.app_hash,
+            appHash: block.block.header.app_hash,
             Timestamp: block.block.header.time,
             txCount: block.block.data.txs.length,
           }
         })
-        console.log(formattedBlocks, 'formatted blocks')
-        // setBlocks(blocksData)
-        // const formattedTxs = await Promise.all(
-        //   txData.map(async (tx: any) => {
-        //     const timestamp = await getTxTimeStamp(tx.height) // Resolve each timestamp
-        //     return {
-        //       hash: tx.hash,
-        //       height: tx.height,
-        //       Timestamp: timestamp, // Use resolved timestamp here
-        //       status: tx.tx_result.code,
-        //     }
-        //   })
-        // )
-        // setApiTxs(formattedTxs)
-        // setTxs(formattedTxs)
-        // setTotalTxs(txsCount)
-        // console.log(formattedTxs, 'formattedTxs')
+        setBlocks(formattedBlocks)
+        setTotalBlocks(blocksCount)
       } catch (error) {
         console.error('Error fetching transactions from REST API:', error)
       }
     }
 
     fetchBlocks()
-  }, [])
+  }, [page])
 
   const updateBlocks = (block: NewBlockEvent) => {
+    const formattedBlock = {
+      height: block.header.height,
+      appHash: toHex(block.header.appHash),
+      txCount: block.txs.length,
+      Timestamp: block.header.time.toISOString(),
+    }
     if (blocks.length) {
-      if (block.header.height > blocks[0].header.height) {
-        setBlocks((prevBlocks) => [block, ...prevBlocks.slice(0, MAX_ROWS - 1)])
+      if (formattedBlock.height > blocks[0].height) {
+        setBlocks((prevBlocks) => [
+          formattedBlock,
+          ...prevBlocks.slice(0, MAX_ROWS - 1),
+        ])
       }
     } else {
       setBlocks([block])
@@ -137,6 +141,20 @@ export default function Blocks() {
 
     return ''
   }
+
+  const handlePreviousPage = () => {
+    if (page > 1) {
+      setPage!(page - 1)
+    }
+  }
+
+  const handleNextPage = () => {
+    if (page < totalBlocks / 20) {
+      setPage!(page + 1)
+    }
+  }
+
+  console.log(blocks, 'state blocks')
 
   return (
     <>
@@ -168,33 +186,75 @@ export default function Blocks() {
                       <Th>Time</Th>
                     </Tr>
                   </Thead>
-                  <Tbody>
-                    {blocks.map((block) => (
-                      <Tr key={block.header.height}>
-                        <Td>
-                          <Link
-                            as={NextLink}
-                            href={'/blocks/' + block.header.height}
-                            style={{ textDecoration: 'none' }}
-                            _focus={{ boxShadow: 'none' }}
-                          >
-                            <Text
-                              color={useColorModeValue(
-                                'light-theme',
-                                'dark-theme'
-                              )}
+                  {blocks.length > 0 ? (
+                    <Tbody>
+                      {blocks.map((block) => (
+                        <Tr key={block.height}>
+                          <Td>
+                            <Link
+                              as={NextLink}
+                              href={'/blocks/' + block.height}
+                              style={{ textDecoration: 'none' }}
+                              _focus={{ boxShadow: 'none' }}
                             >
-                              {block.header.height}
-                            </Text>
-                          </Link>
-                        </Td>
-                        <Td noOfLines={1}>{toHex(block.header.appHash)}</Td>
-                        <Td>{block.txs.length}</Td>
-                        <Td>{timeFromNow(block.header.time.toISOString())}</Td>
-                      </Tr>
-                    ))}
-                  </Tbody>
+                              <Text
+                                color={useColorModeValue(
+                                  'light-theme',
+                                  'dark-theme'
+                                )}
+                              >
+                                {block.height}
+                              </Text>
+                            </Link>
+                          </Td>
+                          <Td>{block.appHash}</Td>
+                          <Td>{block.txCount}</Td>
+                          {block.Timestamp && (
+                            <Td>{getRelativeTime(block.Timestamp)}</Td>
+                          )}
+                        </Tr>
+                      ))}
+                    </Tbody>
+                  ) : (
+                    <Tbody py={2}>Loading Blocks data</Tbody>
+                  )}
                 </Table>
+                {blocks.length > 18 && (
+                  <Box display={'flex'} justifyContent={'center'}>
+                    <HStack
+                      justifyContent="space-between"
+                      alignSelf={''}
+                      mt={4}
+                      px={6}
+                      pb={4}
+                      width={'50%'}
+                    >
+                      <Button
+                        onClick={handlePreviousPage}
+                        disabled={page === 1}
+                        size="sm"
+                        variant="outline"
+                        colorScheme="#f4431c"
+                        color={'#f4431c'}
+                      >
+                        Previous
+                      </Button>
+                      <Text>
+                        Page {page} of {(totalBlocks / 30).toFixed(0)}
+                      </Text>
+                      <Button
+                        onClick={handleNextPage}
+                        disabled={page === totalBlocks / 30}
+                        size="sm"
+                        variant="outline"
+                        colorScheme="#f4431c"
+                        color={'#f4431c'}
+                      >
+                        Next
+                      </Button>
+                    </HStack>
+                  </Box>
+                )}
               </TableContainer>
             </Box>
           </Box>
