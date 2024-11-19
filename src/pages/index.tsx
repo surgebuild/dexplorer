@@ -80,7 +80,6 @@ export default function Home() {
           restEndpoint,
           searchParams
         )
-        console.log(txData, 'txdata')
         const formattedTxs = await Promise.all(
           txData.map(async (tx: any) => {
             const timestamp = await getTxTimeStamp(tx.height) // Resolve each timestamp
@@ -95,7 +94,6 @@ export default function Home() {
         // setApiTxs(formattedTxs)
         setTxs(formattedTxs)
         setTotalTxs(txsCount)
-        console.log(formattedTxs, 'formattedTxs')
       } catch (error) {
         console.error('Error fetching transactions from REST API:', error)
       }
@@ -131,7 +129,6 @@ export default function Home() {
           (transaction, index, self) =>
             index === self.findIndex((tran) => tran.hash === transaction.hash)
         )
-        console.log('updatedTx', updatedTx)
         setTxs(updatedTx)
       }
     } else {

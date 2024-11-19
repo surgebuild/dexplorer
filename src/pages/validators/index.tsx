@@ -41,8 +41,6 @@ export default function Validators() {
     }
   }, [tmClient])
 
-  console.log(toHex(validators[0].address), 'validators')
-
   return (
     <GradientBackground title="Validators">
       <Grid templateColumns="repeat(12, 1fr)" gap={5} mb={9}>

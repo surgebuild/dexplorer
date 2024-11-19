@@ -56,7 +56,6 @@ export default function Transactions() {
           restEndpoint,
           searchParams
         )
-        console.log(txData, 'txdata')
         const formattedTxs = await Promise.all(
           txData.map(async (tx: any) => {
             const timestamp = await getTxTimeStamp(tx.height) // Resolve each timestamp

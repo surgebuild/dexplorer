@@ -154,8 +154,6 @@ export default function Blocks() {
     }
   }
 
-  console.log(blocks, 'state blocks')
-
   return (
     <>
       <Head>
