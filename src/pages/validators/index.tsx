@@ -1,4 +1,5 @@
 import { Box, Grid, GridItem, Img, Skeleton, Text } from '@chakra-ui/react'
+import { toHex } from '@cosmjs/encoding'
 import { StatusResponse } from '@cosmjs/tendermint-rpc'
 import { Validator } from 'cosmjs-types/tendermint/types/validator'
 import { useEffect, useState } from 'react'
@@ -39,6 +40,8 @@ export default function Validators() {
       })
     }
   }, [tmClient])
+
+  console.log(toHex(validators[0].address), 'validators')
 
   return (
     <GradientBackground title="Validators">
