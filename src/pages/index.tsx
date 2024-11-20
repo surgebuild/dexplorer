@@ -26,8 +26,10 @@ import RecentBlocks from '@/components/RecentBlocks'
 import { BoxInfo } from '@/components/shared/BoxInfo'
 import TransactionList from '@/components/TransactionList'
 import {
+  getBlockDetails,
   getTotalInscriptions,
   getTxsByRestApi,
+  getTxTimeStamp,
   getValidators,
 } from '@/rpc/query'
 import { selectTmClient } from '@/store/connectSlice'
@@ -38,7 +40,8 @@ import { images } from '@/utils/images'
 interface Tx {
   hash: any
   TxEvent: TxEvent
-  Timestamp: Date
+  Timestamp: string
+  height: number
 }
 
 const MAX_ROWS = 20
@@ -52,6 +55,8 @@ export default function Home() {
   const [status, setStatus] = useState<StatusResponse | null>()
   const [totalInscription, setTotalInscription] = useState<number>(0)
   const [txs, setTxs] = useState<Tx[]>([])
+  const [totalTxs, setTotalTxs] = useState(0)
+  const [page, setPage] = useState(1)
 
   useEffect(() => {
     if (tmClient) {
@@ -59,6 +64,43 @@ export default function Home() {
       getValidators(tmClient).then((response) => setValidators(response.total))
     }
   }, [tmClient])
+
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      const restEndpoint = 'https://rpc.devnet.surge.dev'
+      const searchParams = {
+        query: `"tx.height>0"`,
+        per_page: '20',
+        page: `${page}`,
+        order_by: `"desc"`,
+      }
+
+      try {
+        const { txData, txsCount } = await getTxsByRestApi(
+          restEndpoint,
+          searchParams
+        )
+        const formattedTxs = await Promise.all(
+          txData.map(async (tx: any) => {
+            const timestamp = await getTxTimeStamp(tx.height) // Resolve each timestamp
+            return {
+              hash: tx.hash,
+              height: tx.height,
+              Timestamp: timestamp, // Use resolved timestamp here
+              status: tx.tx_result.code,
+            }
+          })
+        )
+        // setApiTxs(formattedTxs)
+        setTxs(formattedTxs)
+        setTotalTxs(txsCount)
+      } catch (error) {
+        console.error('Error fetching transactions from REST API:', error)
+      }
+    }
+
+    fetchTransactions()
+  }, [page])
 
   useEffect(() => {
     if (txEvent) {
@@ -75,21 +117,18 @@ export default function Home() {
 
     const tx = {
       TxEvent: txEvent,
-      Timestamp: new Date(),
+      Timestamp: new Date().toISOString(),
       data: data,
       height: txEvent.height,
       hash: toHex(txEvent.hash).toUpperCase(),
+      status: txEvent.result.code,
     }
     if (txs.length) {
-      if (
-        txEvent.height >= txs[0].TxEvent.height &&
-        txEvent.hash != txs[0].TxEvent.hash
-      ) {
+      if (txEvent.height >= txs[0]?.height && txEvent.hash != txs[0].hash) {
         const updatedTx = [tx, ...txs.slice(0, MAX_ROWS - 1)].filter(
           (transaction, index, self) =>
             index === self.findIndex((tran) => tran.hash === transaction.hash)
         )
-        console.log('updatedTx', updatedTx)
         setTxs(updatedTx)
       }
     } else {
@@ -183,13 +222,13 @@ export default function Home() {
                   tooltipText=""
                 />
               </Skeleton>
-              <Skeleton isLoaded={isLoaded}>
+              {/* <Skeleton isLoaded={isLoaded}>
                 <BoxInfo
                   name="MAX TPS"
                   value={'-'}
                   tooltipText="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"
                 />
-              </Skeleton>
+              </Skeleton> */}
             </SimpleGrid>
           </Box>
           <Grid templateColumns="repeat(12, 1fr)" gap={5} pb={10}>
@@ -198,6 +237,9 @@ export default function Home() {
                 title="Transactions"
                 showAll={false}
                 txs={txs?.length ? txs : []}
+                totalTxs={totalTxs}
+                page={page}
+                setPage={setPage}
               />
             </GridItem>
             <GridItem

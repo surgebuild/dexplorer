@@ -1,22 +1,45 @@
 import { Box, Grid, GridItem, Img, Skeleton, Text } from '@chakra-ui/react'
+import { toHex } from '@cosmjs/encoding'
 import { StatusResponse } from '@cosmjs/tendermint-rpc'
+import { Validator } from 'cosmjs-types/tendermint/types/validator'
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 
 import { BoxInfo } from '@/components/shared/BoxInfo'
 import GradientBackground from '@/components/shared/GradientBackground'
 import ValidatorsList from '@/components/ValidatorsList'
+import { getValidators } from '@/rpc/query'
+import { selectTmClient } from '@/store/connectSlice'
 import { selectNewBlock } from '@/store/streamSlice'
 
 export default function Validators() {
+  const tmClient = useSelector(selectTmClient)
   const [isLoaded, setIsLoaded] = useState(false)
   const newBlock = useSelector(selectNewBlock)
   const [status, setStatus] = useState<StatusResponse | null>()
+  const [validators, setValidators] = useState<
+    readonly Validator[] | Validator[]
+  >([])
+  const [totalValidators, setTotalValidators] = useState(0)
+  const [validatorCount, setValidatorCount] = useState(0)
+
   useEffect(() => {
     if ((!isLoaded && newBlock) || (!isLoaded && status)) {
       setIsLoaded(true)
     }
   }, [isLoaded, newBlock, status])
+
+  useEffect(() => {
+    if (tmClient) {
+      tmClient.status().then((response) => setStatus(response))
+      getValidators(tmClient).then((response) => {
+        //@ts-ignore
+        setValidators(response.validators)
+        setTotalValidators(response.total)
+        setValidatorCount(response.count)
+      })
+    }
+  }, [tmClient])
 
   return (
     <GradientBackground title="Validators">
@@ -32,7 +55,7 @@ export default function Validators() {
               bgColor="green.200"
               color="green.600"
               name="TOTAL VALIDATORS"
-              value={3}
+              value={totalValidators}
               tooltipText=""
               height={{ base: '120px', md: '100px' }}
             />
@@ -40,7 +63,7 @@ export default function Validators() {
           <Skeleton isLoaded={isLoaded} width={{ base: '50%', md: '100%' }}>
             <BoxInfo
               name="ACTIVE VALIDATORS"
-              value={3}
+              value={validatorCount}
               tooltipText=""
               height={{ base: '120px', md: '100px' }}
             />
@@ -54,7 +77,8 @@ export default function Validators() {
           borderRadius={'8px'}
         ></GridItem>
       </Grid>
-      <ValidatorsList title="All Validators" />
+      {/* @ts-ignore */}
+      <ValidatorsList title="All Validators" list={validators} />
     </GradientBackground>
   )
 }

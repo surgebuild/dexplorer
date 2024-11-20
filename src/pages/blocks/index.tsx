@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Divider,
   Heading,
   HStack,
@@ -32,59 +33,88 @@ import { useEffect, useState } from 'react'
 import { FiCheck, FiChevronRight, FiHome, FiX } from 'react-icons/fi'
 import { useSelector } from 'react-redux'
 
+import GradientBackground from '@/components/shared/GradientBackground'
+import { getBlocksByRestApi } from '@/rpc/query'
 import { selectNewBlock, selectTxEvent } from '@/store/streamSlice'
+import { getRelativeTime } from '@/utils'
 import { getTypeMsg, timeFromNow, trimHash } from '@/utils/helper'
 
-const MAX_ROWS = 20
+const MAX_ROWS = 30
 
 interface Tx {
   TxEvent: TxEvent
   Timestamp: Date
 }
 
+interface BlockTx extends NewBlockEvent {
+  height: number
+  appHash: string
+  Timestamp: string
+  txCount: number
+}
+
 export default function Blocks() {
   const newBlock = useSelector(selectNewBlock)
   const txEvent = useSelector(selectTxEvent)
-  const [blocks, setBlocks] = useState<NewBlockEvent[]>([])
-
-  const [txs, setTxs] = useState<Tx[]>([])
+  const [blocks, setBlocks] = useState<any[]>([])
+  const [page, setPage] = useState(1)
+  const [totalBlocks, setTotalBlocks] = useState(0)
 
   useEffect(() => {
-    if (newBlock) {
+    if (newBlock && page == 1) {
       updateBlocks(newBlock)
     }
   }, [newBlock])
 
   useEffect(() => {
-    if (txEvent) {
-      updateTxs(txEvent)
+    const fetchBlocks = async () => {
+      const restEndpoint = 'https://rpc.devnet.surge.dev'
+      const searchParams = {
+        query: `"block.height>0"`,
+        per_page: '30',
+        page: `${page}`,
+        order_by: `"desc"`,
+      }
+
+      try {
+        const { blocksData, blocksCount } = await getBlocksByRestApi(
+          restEndpoint,
+          searchParams
+        )
+        const formattedBlocks = blocksData.map((block: any) => {
+          return {
+            height: block.block.header.height,
+            appHash: block.block.header.app_hash,
+            Timestamp: block.block.header.time,
+            txCount: block.block.data.txs.length,
+          }
+        })
+        setBlocks(formattedBlocks)
+        setTotalBlocks(blocksCount)
+      } catch (error) {
+        console.error('Error fetching transactions from REST API:', error)
+      }
     }
-  }, [txEvent])
+
+    fetchBlocks()
+  }, [page])
 
   const updateBlocks = (block: NewBlockEvent) => {
+    const formattedBlock = {
+      height: block.header.height,
+      appHash: toHex(block.header.appHash),
+      txCount: block.txs.length,
+      Timestamp: block.header.time.toISOString(),
+    }
     if (blocks.length) {
-      if (block.header.height > blocks[0].header.height) {
-        setBlocks((prevBlocks) => [block, ...prevBlocks.slice(0, MAX_ROWS - 1)])
+      if (formattedBlock.height > blocks[0].height) {
+        setBlocks((prevBlocks) => [
+          formattedBlock,
+          ...prevBlocks.slice(0, MAX_ROWS - 1),
+        ])
       }
     } else {
       setBlocks([block])
-    }
-  }
-
-  const updateTxs = (txEvent: TxEvent) => {
-    const tx = {
-      TxEvent: txEvent,
-      Timestamp: new Date(),
-    }
-    if (txs.length) {
-      if (
-        txEvent.height >= txs[0].TxEvent.height &&
-        txEvent.hash != txs[0].TxEvent.hash
-      ) {
-        setTxs((prevTx) => [tx, ...prevTx.slice(0, MAX_ROWS - 1)])
-      }
-    } else {
-      setTxs([tx])
     }
   }
 
@@ -112,6 +142,18 @@ export default function Blocks() {
     return ''
   }
 
+  const handlePreviousPage = () => {
+    if (page > 1) {
+      setPage!(page - 1)
+    }
+  }
+
+  const handleNextPage = () => {
+    if (page < totalBlocks / 20) {
+      setPage!(page + 1)
+    }
+  }
+
   return (
     <>
       <Head>
@@ -120,178 +162,102 @@ export default function Blocks() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="block_main">
-        <HStack h="24px">
-          <Heading size={'md'}>Blocks</Heading>
-          <Divider borderColor={'gray'} size="10px" orientation="vertical" />
-          <Link
-            as={NextLink}
-            href={'/'}
-            style={{ textDecoration: 'none' }}
-            _focus={{ boxShadow: 'none' }}
-            display="flex"
-            justifyContent="center"
-          >
-            <Icon
-              fontSize="16"
-              color={useColorModeValue('light-theme', 'dark-theme')}
-              as={FiHome}
-            />
-          </Link>
-          <Icon fontSize="16" as={FiChevronRight} />
-          <Text>Blocks</Text>
-        </HStack>
-        <Box
-          mt={8}
-          // bg={useColorModeValue('light-container', 'dark-container')}
-          bg={'dark-bg'}
-          border={'1px'}
-          shadow={'base'}
-          borderRadius={4}
-          p={4}
-        >
-          <Tabs variant="unstyled">
-            <TabList>
-              <Tab
-                _selected={{
-                  color: 'white',
-                  bg: useColorModeValue('light-theme', 'dark-theme'),
-                }}
-                borderRadius={5}
-              >
-                Blocks
-              </Tab>
-              <Tab
-                _selected={{
-                  color: 'white',
-                  bg: useColorModeValue('light-theme', 'dark-theme'),
-                }}
-                borderRadius={5}
-              >
-                Transactions
-              </Tab>
-            </TabList>
-            <TabPanels>
-              <TabPanel>
-                <Box
-                  mt={8}
-                  bg={'dark-bg'}
-                  borderRadius={4}
-                  border={'1px'}
-                  borderColor={'gray-900'}
-                >
-                  <TableContainer>
-                    <Table variant="simple">
-                      <Thead>
-                        <Tr>
-                          <Th>
-                            <b>Height</b>
-                          </Th>
-                          <Th>App Hash</Th>
-                          <Th>Txs</Th>
-                          <Th>Time</Th>
-                        </Tr>
-                      </Thead>
-                      <Tbody>
-                        {blocks.map((block) => (
-                          <Tr key={block.header.height}>
-                            <Td>
-                              <Link
-                                as={NextLink}
-                                href={'/blocks/' + block.header.height}
-                                style={{ textDecoration: 'none' }}
-                                _focus={{ boxShadow: 'none' }}
+      <Box>
+        <GradientBackground title="Blocks">
+          <Box>
+            <Box
+              mt={8}
+              bg={'dark-bg'}
+              borderRadius={4}
+              border={'1px'}
+              borderColor={'gray-900'}
+            >
+              <TableContainer>
+                <Table variant="simple">
+                  <Thead>
+                    <Tr>
+                      <Th>
+                        <b>Height</b>
+                      </Th>
+                      <Th>App Hash</Th>
+                      <Th>Txs</Th>
+                      <Th>Time</Th>
+                    </Tr>
+                  </Thead>
+                  {blocks.length > 0 ? (
+                    <Tbody>
+                      {blocks.map((block) => (
+                        <Tr key={block.height}>
+                          <Td>
+                            <Link
+                              as={NextLink}
+                              href={'/blocks/' + block.height}
+                              style={{ textDecoration: 'none' }}
+                              _focus={{ boxShadow: 'none' }}
+                            >
+                              <Text
+                                color={useColorModeValue(
+                                  'light-theme',
+                                  'dark-theme'
+                                )}
                               >
-                                <Text
-                                  color={useColorModeValue(
-                                    'light-theme',
-                                    'dark-theme'
-                                  )}
-                                >
-                                  {block.header.height}
-                                </Text>
-                              </Link>
-                            </Td>
-                            <Td noOfLines={1}>{toHex(block.header.appHash)}</Td>
-                            <Td>{block.txs.length}</Td>
-                            <Td>
-                              {timeFromNow(block.header.time.toISOString())}
-                            </Td>
-                          </Tr>
-                        ))}
-                      </Tbody>
-                    </Table>
-                  </TableContainer>
-                </Box>
-              </TabPanel>
-              <TabPanel>
-                <Box
-                  mt={8}
-                  bg={'dark-bg'}
-                  borderRadius={4}
-                  border={'1px'}
-                  borderColor={'gray-900'}
-                >
-                  <TableContainer>
-                    <Table variant="simple">
-                      <Thead>
-                        <Tr>
-                          <Th>Tx Hash</Th>
-                          <Th>Result</Th>
-                          <Th>Messages</Th>
-                          <Th>Height</Th>
-                          <Th>Time</Th>
+                                {block.height}
+                              </Text>
+                            </Link>
+                          </Td>
+                          <Td>{block.appHash}</Td>
+                          <Td>{block.txCount}</Td>
+                          {block.Timestamp && (
+                            <Td>{getRelativeTime(block.Timestamp)}</Td>
+                          )}
                         </Tr>
-                      </Thead>
-                      <Tbody>
-                        {txs.map((tx) => (
-                          <Tr key={toHex(tx.TxEvent.hash)}>
-                            <Td>
-                              <Link
-                                as={NextLink}
-                                href={
-                                  '/txs/' + toHex(tx.TxEvent.hash).toUpperCase()
-                                }
-                                style={{ textDecoration: 'none' }}
-                                _focus={{ boxShadow: 'none' }}
-                              >
-                                <Text
-                                  color={useColorModeValue(
-                                    'light-theme',
-                                    'dark-theme'
-                                  )}
-                                >
-                                  {trimHash(tx.TxEvent.hash)}
-                                </Text>
-                              </Link>
-                            </Td>
-                            <Td>
-                              {tx.TxEvent.result.code == 0 ? (
-                                <Tag variant="subtle" colorScheme="green">
-                                  <TagLeftIcon as={FiCheck} />
-                                  <TagLabel>Success</TagLabel>
-                                </Tag>
-                              ) : (
-                                <Tag variant="subtle" colorScheme="red">
-                                  <TagLeftIcon as={FiX} />
-                                  <TagLabel>Error</TagLabel>
-                                </Tag>
-                              )}
-                            </Td>
-                            <Td>{renderMessages(tx.TxEvent.result.data)}</Td>
-                            <Td>{tx.TxEvent.height}</Td>
-                            <Td>{timeFromNow(tx.Timestamp.toISOString())}</Td>
-                          </Tr>
-                        ))}
-                      </Tbody>
-                    </Table>
-                  </TableContainer>
-                </Box>
-              </TabPanel>
-            </TabPanels>
-          </Tabs>
-        </Box>
-      </main>
+                      ))}
+                    </Tbody>
+                  ) : (
+                    <Tbody py={2}>Loading Blocks data</Tbody>
+                  )}
+                </Table>
+                {blocks.length > 18 && (
+                  <Box display={'flex'} justifyContent={'center'}>
+                    <HStack
+                      justifyContent="space-between"
+                      alignSelf={''}
+                      mt={4}
+                      px={6}
+                      pb={4}
+                      width={'50%'}
+                    >
+                      <Button
+                        onClick={handlePreviousPage}
+                        disabled={page === 1}
+                        size="sm"
+                        variant="outline"
+                        colorScheme="#f4431c"
+                        color={'#f4431c'}
+                      >
+                        Previous
+                      </Button>
+                      <Text>
+                        Page {page} of {(totalBlocks / 30).toFixed(0)}
+                      </Text>
+                      <Button
+                        onClick={handleNextPage}
+                        disabled={page === totalBlocks / 30}
+                        size="sm"
+                        variant="outline"
+                        colorScheme="#f4431c"
+                        color={'#f4431c'}
+                      >
+                        Next
+                      </Button>
+                    </HStack>
+                  </Box>
+                )}
+              </TableContainer>
+            </Box>
+          </Box>
+        </GradientBackground>
+      </Box>
     </>
   )
 }

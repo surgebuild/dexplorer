@@ -131,9 +131,6 @@ export default function DetailBlock() {
     })
   }
 
-  console.log(block, 'block data')
-  console.log(txs, 'block txs')
-
   return (
     <>
       <Head>

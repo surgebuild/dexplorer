@@ -21,21 +21,64 @@ import { BoxInfo } from '@/components/shared/BoxInfo'
 import GradientBackground from '@/components/shared/GradientBackground'
 import TransactionsChart from '@/components/shared/TpsChart'
 import TransactionList from '@/components/TransactionList'
+import { getTxsByRestApi, getTxTimeStamp } from '@/rpc/query'
 import { selectNewBlock, selectTxEvent } from '@/store/streamSlice'
 import { MAX_ROWS } from '@/utils/constant'
 
 interface Tx {
   hash: any
   TxEvent: TxEvent
-  Timestamp: Date
+  Timestamp: string
+  height: number
 }
 
 export default function Transactions() {
   const txEvent = useSelector(selectTxEvent)
   const [isLoaded, setIsLoaded] = useState(false)
   const newBlock = useSelector(selectNewBlock)
+  const [page, setPage] = useState(1)
   const [status, setStatus] = useState<StatusResponse | null>()
   const [txs, setTxs] = useState<Tx[]>([])
+  const [totalTxs, setTotalTxs] = useState(0)
+
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      const restEndpoint = 'https://rpc.devnet.surge.dev'
+      const searchParams = {
+        query: `"tx.height>0"`,
+        per_page: '20',
+        page: `${page}`,
+        order_by: `"desc"`,
+      }
+
+      try {
+        const { txData, txsCount } = await getTxsByRestApi(
+          restEndpoint,
+          searchParams
+        )
+        const formattedTxs = await Promise.all(
+          txData.map(async (tx: any) => {
+            const timestamp = await getTxTimeStamp(tx.height) // Resolve each timestamp
+            return {
+              hash: tx.hash,
+              height: tx.height,
+              Timestamp: timestamp, // Use resolved timestamp here
+              status: tx.tx_result.code,
+            }
+          })
+        )
+        // setApiTxs(formattedTxs)
+        setTxs(formattedTxs)
+        setTotalTxs(txsCount)
+        console.log(formattedTxs, 'formattedTxs')
+      } catch (error) {
+        console.error('Error fetching transactions from REST API:', error)
+      }
+    }
+
+    fetchTransactions()
+  }, [page])
+
   const updateTxs = (txEvent: TxEvent) => {
     if (!txEvent.result.data) {
       return
@@ -45,16 +88,14 @@ export default function Transactions() {
 
     const tx = {
       TxEvent: txEvent,
-      Timestamp: new Date(),
+      Timestamp: new Date().toISOString(),
       data: data,
       height: txEvent.height,
       hash: toHex(txEvent.hash).toUpperCase(),
+      status: txEvent.result.code,
     }
     if (txs.length) {
-      if (
-        txEvent.height >= txs[0].TxEvent.height &&
-        txEvent.hash != txs[0].TxEvent.hash
-      ) {
+      if (txEvent.height >= txs[0].height && txEvent.hash != txs[0].hash) {
         const updatedTx = [tx, ...txs.slice(0, MAX_ROWS - 1)].filter(
           (transaction, index, self) =>
             index ===
@@ -147,6 +188,9 @@ export default function Transactions() {
         title="All Transactions"
         showAll={true}
         txs={txs?.length ? txs : []}
+        totalTxs={totalTxs}
+        page={page}
+        setPage={setPage}
       />
     </GradientBackground>
   )

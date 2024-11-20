@@ -96,10 +96,6 @@ export default function DetailBlock() {
     }
   }, [txData])
 
-  console.log(txData, 'data')
-
-  console.log(block, 'block data')
-
   const getFee = (fees: Coin[] | undefined) => {
     if (fees && fees.length) {
       return (
