@@ -137,27 +137,31 @@ export default function Transactions() {
         <GradientBackground title="Transactions">
           <Grid templateColumns="repeat(12, 1fr)" gap={5} mb={9}>
             <GridItem
-              colSpan={{ base: 12, md: 8 }}
+              colSpan={{ base: 12, md: 4 }}
               display={'flex'}
               flexDirection={{ base: 'row', md: 'row' }}
               gap={5}
             >
-              <Skeleton isLoaded={isLoaded} width={{ base: '50%', md: '100%' }}>
+              <Skeleton
+                isLoaded={isLoaded}
+                width={{ base: '50%', md: '100%' }}
+                rounded={'12px'}
+              >
                 <BoxInfo
                   bgColor="green.200"
                   color="green.600"
                   name="TOTAL TXNS"
-                  value={`#${totalTxs}`}
+                  value={`#${totalTxs ?? '-'}`}
                   tooltipText="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"
                 />
               </Skeleton>
-              <Skeleton isLoaded={isLoaded} width={{ base: '50%', md: '100%' }}>
+              {/* <Skeleton isLoaded={isLoaded} width={{ base: '50%', md: '100%' }}>
                 <BoxInfo
                   name="MAX TPS"
                   value={'-'}
                   tooltipText="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"
                 />
-              </Skeleton>
+              </Skeleton> */}
             </GridItem>
             {/* <GridItem colSpan={{ base: 12, md: 9 }}>
               <Box>
