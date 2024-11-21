@@ -81,7 +81,7 @@ export default function RecentBlocks() {
       </HStack>
       <VStack gap={4} w={'100%'} mb={{ base: '18px', md: '38px' }}>
         {isLoading && (!recentBlocks || recentBlocks.length === 0) ? (
-          <Skeleton w={'100%'} height="340px" />
+          <Skeleton w={'100%'} height="220px" borderRadius={12} />
         ) : (
           recentBlocks?.map((item: any, key: number) => (
             <RecentBlock key={key} bitcoinData={item} />
