@@ -10,31 +10,50 @@ import {
 } from '@chakra-ui/react'
 import NextLink from 'next/link'
 import router from 'next/router'
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { getTotalInscriptions } from '@/rpc/query'
 import { shortenAddress } from '@/utils/helper'
 import { images } from '@/utils/images'
 
 export default function RecentBlocks() {
+  const pollingInterval = 15_000
   const [isLoading, setIsLoading] = useState(false)
   const [inscriptionData, setInscriptionData] = useState([])
+  const [err, setError] = useState<any>('')
 
-  async function checkBitcoinData() {
-    const data = await getTotalInscriptions()
-    const bitcoinData = data?.bitcoindata
-    setInscriptionData(bitcoinData.reverse().slice(0, -1)) // removing one element that has wrong values for now in the chain FIX THIS LATER
-    setIsLoading(false)
-  }
+  const fetchBitcoinData = useCallback(async () => {
+    try {
+      setIsLoading(true)
+      const data = await getTotalInscriptions()
+      const bitcoinData = data?.bitcoindata
 
-  useEffect(() => {
-    setIsLoading(true)
-    const intervalId = setInterval(checkBitcoinData, 15000)
-    return () => {
-      clearInterval(intervalId)
+      if (bitcoinData) {
+        setInscriptionData(bitcoinData)
+        setError(null)
+      } else {
+        throw new Error('No bitcoin data received')
+      }
+    } catch (err: any) {
+      setError(err?.message)
+      console.error('Error fetching Bitcoin data:', err)
+    } finally {
       setIsLoading(false)
     }
   }, [])
+
+  useEffect(() => {
+    // Initial fetch
+    fetchBitcoinData()
+
+    // Set up polling
+    const intervalId = setInterval(fetchBitcoinData, pollingInterval)
+
+    // Cleanup function
+    return () => {
+      clearInterval(intervalId)
+    }
+  }, [fetchBitcoinData, pollingInterval])
 
   const recentBlocks = useMemo(() => {
     if (inscriptionData.length > 0) {
@@ -62,7 +81,7 @@ export default function RecentBlocks() {
       </HStack>
       <VStack gap={4} w={'100%'} mb={{ base: '18px', md: '38px' }}>
         {isLoading && (!recentBlocks || recentBlocks.length === 0) ? (
-          <Skeleton w={'100%'} height="340px" />
+          <Skeleton w={'100%'} height="220px" borderRadius={12} />
         ) : (
           recentBlocks?.map((item: any, key: number) => (
             <RecentBlock key={key} bitcoinData={item} />
