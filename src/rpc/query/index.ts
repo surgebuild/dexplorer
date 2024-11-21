@@ -82,7 +82,7 @@ export async function getTxsBySender(
 export async function getTotalInscriptions() {
   try {
     const response = await fetch(
-      'https://api.devnet.surge.dev/surge/zk/bitcoindata'
+      'https://api.devnet.surge.dev/surge/zk/bitcoindata?pagination.reverse=true'
     )
 
     if (!response.ok) {

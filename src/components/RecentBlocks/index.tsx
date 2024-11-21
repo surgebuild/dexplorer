@@ -23,7 +23,7 @@ export default function RecentBlocks() {
   async function checkBitcoinData() {
     const data = await getTotalInscriptions()
     const bitcoinData = data?.bitcoindata
-    setInscriptionData(bitcoinData.reverse().slice(0, -1)) // removing one element that has wrong values for now in the chain FIX THIS LATER
+    setInscriptionData(bitcoinData) // removing one element that has wrong values for now in the chain FIX THIS LATER
     setIsLoading(false)
   }
 
