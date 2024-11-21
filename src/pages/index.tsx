@@ -57,6 +57,7 @@ export default function Home() {
   const [txs, setTxs] = useState<Tx[]>([])
   const [totalTxs, setTotalTxs] = useState(0)
   const [page, setPage] = useState(1)
+  const [loadingTx, setLoadingTx] = useState(false)
 
   useEffect(() => {
     if (tmClient) {
@@ -76,6 +77,7 @@ export default function Home() {
       }
 
       try {
+        setLoadingTx(true)
         const { txData, txsCount } = await getTxsByRestApi(
           restEndpoint,
           searchParams
@@ -92,10 +94,12 @@ export default function Home() {
           })
         )
         // setApiTxs(formattedTxs)
+        setLoadingTx(false)
         setTxs(formattedTxs)
         setTotalTxs(txsCount)
       } catch (error) {
         console.error('Error fetching transactions from REST API:', error)
+        setLoadingTx(false)
       }
     }
 
@@ -194,14 +198,7 @@ export default function Home() {
                   bgColor="green.200"
                   color="green.600"
                   name="TOTAL TXNS"
-                  value={
-                    '-'
-                    // newBlock?.header.height
-                    //   ? '#' + newBlock?.header.height * 2
-                    //   : (('#' +
-                    //       status?.syncInfo
-                    //         .latestBlockHeight) as unknown as number) * 2
-                  }
+                  value={`#${totalTxs}`}
                   tooltipText="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"
                 />
               </Skeleton>
@@ -242,6 +239,7 @@ export default function Home() {
                 totalTxs={totalTxs}
                 page={page}
                 setPage={setPage}
+                loading={loadingTx}
               />
             </GridItem>
             <GridItem

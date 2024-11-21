@@ -59,6 +59,7 @@ export default function Blocks() {
   const [blocks, setBlocks] = useState<any[]>([])
   const [page, setPage] = useState(1)
   const [totalBlocks, setTotalBlocks] = useState(0)
+  const [loadingBlocks, setLoadingBlocks] = useState(false)
 
   useEffect(() => {
     if (newBlock && page == 1) {
@@ -77,6 +78,7 @@ export default function Blocks() {
       }
 
       try {
+        setLoadingBlocks(true)
         const { blocksData, blocksCount } = await getBlocksByRestApi(
           restEndpoint,
           searchParams
@@ -89,10 +91,12 @@ export default function Blocks() {
             txCount: block.block.data.txs.length,
           }
         })
+        setLoadingBlocks(false)
         setBlocks(formattedBlocks)
         setTotalBlocks(blocksCount)
       } catch (error) {
         console.error('Error fetching transactions from REST API:', error)
+        setLoadingBlocks(false)
       }
     }
 
@@ -184,7 +188,7 @@ export default function Blocks() {
                       <Th>Time</Th>
                     </Tr>
                   </Thead>
-                  {blocks.length > 0 ? (
+                  {blocks.length > 0 && !loadingBlocks ? (
                     <Tbody>
                       {blocks.map((block) => (
                         <Tr key={block.height}>
@@ -214,7 +218,19 @@ export default function Blocks() {
                       ))}
                     </Tbody>
                   ) : (
-                    <Tbody py={2}>Loading Blocks data</Tbody>
+                    <Tbody py={2}>
+                      <Tr>
+                        <Td
+                          border={'none'}
+                          color={'text-50'}
+                          colSpan={4}
+                          textAlign="center"
+                          pt={8}
+                        >
+                          Loading Blocks...
+                        </Td>
+                      </Tr>
+                    </Tbody>
                   )}
                 </Table>
                 {blocks.length > 18 && (

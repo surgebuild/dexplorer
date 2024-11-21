@@ -40,6 +40,7 @@ export default function Transactions() {
   const [status, setStatus] = useState<StatusResponse | null>()
   const [txs, setTxs] = useState<Tx[]>([])
   const [totalTxs, setTotalTxs] = useState(0)
+  const [loadingTx, setLoadingTx] = useState(false)
 
   useEffect(() => {
     const fetchTransactions = async () => {
@@ -52,6 +53,7 @@ export default function Transactions() {
       }
 
       try {
+        setLoadingTx(true)
         const { txData, txsCount } = await getTxsByRestApi(
           restEndpoint,
           searchParams
@@ -68,10 +70,12 @@ export default function Transactions() {
           })
         )
         // setApiTxs(formattedTxs)
+        setLoadingTx(false)
         setTxs(formattedTxs)
         setTotalTxs(txsCount)
         console.log(formattedTxs, 'formattedTxs')
       } catch (error) {
+        setLoadingTx(false)
         console.error('Error fetching transactions from REST API:', error)
       }
     }
@@ -191,6 +195,7 @@ export default function Transactions() {
         totalTxs={totalTxs}
         page={page}
         setPage={setPage}
+        loading={loadingTx}
       />
     </GradientBackground>
   )

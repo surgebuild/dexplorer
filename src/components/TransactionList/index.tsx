@@ -45,6 +45,7 @@ interface ITransactionList {
   page: number
   setPage: (page: number) => void
   totalTxs: number
+  loading: boolean
 }
 
 export default function TransactionList({
@@ -54,6 +55,7 @@ export default function TransactionList({
   page = 1,
   setPage,
   totalTxs,
+  loading = false,
 }: ITransactionList) {
   const handlePreviousPage = () => {
     if (page > 1) {
@@ -104,7 +106,7 @@ export default function TransactionList({
             </Tr>
           </Thead>
           <Tbody>
-            {txs.length > 0 ? (
+            {txs.length > 0 && !loading ? (
               txs.map(
                 (
                   transaction: {
@@ -202,7 +204,7 @@ export default function TransactionList({
                   textAlign="center"
                   pt={8}
                 >
-                  No transactions available!!!
+                  Loading Transactions...
                 </Td>
               </Tr>
             )}
