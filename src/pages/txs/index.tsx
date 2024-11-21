@@ -137,9 +137,9 @@ export default function Transactions() {
         <GradientBackground title="Transactions">
           <Grid templateColumns="repeat(12, 1fr)" gap={5} mb={9}>
             <GridItem
-              colSpan={{ base: 12, md: 3 }}
+              colSpan={{ base: 12, md: 8 }}
               display={'flex'}
-              flexDirection={{ base: 'row', md: 'column' }}
+              flexDirection={{ base: 'row', md: 'row' }}
               gap={5}
             >
               <Skeleton isLoaded={isLoaded} width={{ base: '50%', md: '100%' }}>
@@ -159,7 +159,7 @@ export default function Transactions() {
                 />
               </Skeleton>
             </GridItem>
-            <GridItem colSpan={{ base: 12, md: 9 }}>
+            {/* <GridItem colSpan={{ base: 12, md: 9 }}>
               <Box>
                 <VStack
                   bg={'gray-1000'}
@@ -188,7 +188,7 @@ export default function Transactions() {
                   <TransactionsChart />
                 </VStack>
               </Box>
-            </GridItem>
+            </GridItem> */}
           </Grid>
           <TransactionList
             title="All Transactions"
