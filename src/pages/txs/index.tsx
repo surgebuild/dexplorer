@@ -14,6 +14,7 @@ import {
 import { toHex } from '@cosmjs/encoding'
 import { StatusResponse, TxEvent } from '@cosmjs/tendermint-rpc'
 import { TxBody } from 'cosmjs-types/cosmos/tx/v1beta1/tx'
+import Head from 'next/head'
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 
@@ -125,78 +126,81 @@ export default function Transactions() {
   }, [txEvent])
 
   return (
-    <GradientBackground title="Transactions">
-      <Grid templateColumns="repeat(12, 1fr)" gap={5} mb={9}>
-        <GridItem
-          colSpan={{ base: 12, md: 3 }}
-          display={'flex'}
-          flexDirection={{ base: 'row', md: 'column' }}
-          gap={5}
-        >
-          <Skeleton isLoaded={isLoaded} width={{ base: '50%', md: '100%' }}>
-            <BoxInfo
-              bgColor="green.200"
-              color="green.600"
-              name="TOTAL TXNS"
-              value={
-                '-'
-                // newBlock?.header.height
-                //   ? '#' + newBlock?.header.height * 2
-                //   : (('#' +
-                //       status?.syncInfo
-                //         .latestBlockHeight) as unknown as number) * 2
-              }
-              tooltipText="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"
-            />
-          </Skeleton>
-          <Skeleton isLoaded={isLoaded} width={{ base: '50%', md: '100%' }}>
-            <BoxInfo
-              name="MAX TPS"
-              value={'-'}
-              tooltipText="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"
-            />
-          </Skeleton>
-        </GridItem>
-        <GridItem colSpan={{ base: 12, md: 9 }}>
-          <Box>
-            <VStack
-              bg={'gray-1000'}
-              borderRadius={12}
-              p={4}
-              pb={2}
-              border={'1px'}
-              h={'220px'}
-              borderColor={'gray-900'}
-              align={'flex-start'}
+    <>
+      <Head>
+        <title>Transactions | Surge Explorer</title>
+        <meta name="description" content="Transactions | Surge Explorer" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+      <main>
+        <GradientBackground title="Transactions">
+          <Grid templateColumns="repeat(12, 1fr)" gap={5} mb={9}>
+            <GridItem
+              colSpan={{ base: 12, md: 3 }}
+              display={'flex'}
+              flexDirection={{ base: 'row', md: 'column' }}
+              gap={5}
             >
-              <HStack mb={'14px'}>
-                <Heading size={'xs'} color={'gray-500'} fontWeight={500}>
-                  Transactions
-                </Heading>
-                <Tooltip
-                  label={'tooltip text'}
-                  placement="right"
-                  bg="gray.300"
-                  color="black"
+              <Skeleton isLoaded={isLoaded} width={{ base: '50%', md: '100%' }}>
+                <BoxInfo
+                  bgColor="green.200"
+                  color="green.600"
+                  name="TOTAL TXNS"
+                  value={`#${totalTxs}`}
+                  tooltipText="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"
+                />
+              </Skeleton>
+              <Skeleton isLoaded={isLoaded} width={{ base: '50%', md: '100%' }}>
+                <BoxInfo
+                  name="MAX TPS"
+                  value={'-'}
+                  tooltipText="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"
+                />
+              </Skeleton>
+            </GridItem>
+            <GridItem colSpan={{ base: 12, md: 9 }}>
+              <Box>
+                <VStack
+                  bg={'gray-1000'}
+                  borderRadius={12}
+                  p={4}
+                  pb={2}
+                  border={'1px'}
+                  h={'220px'}
+                  borderColor={'gray-900'}
+                  align={'flex-start'}
                 >
-                  <Icon as={InfoOutlineIcon} w={'13px'} color="gray-500" />
-                </Tooltip>
-              </HStack>
+                  <HStack mb={'14px'}>
+                    <Heading size={'xs'} color={'gray-500'} fontWeight={500}>
+                      Transactions
+                    </Heading>
+                    <Tooltip
+                      label={'tooltip text'}
+                      placement="right"
+                      bg="gray.300"
+                      color="black"
+                    >
+                      <Icon as={InfoOutlineIcon} w={'13px'} color="gray-500" />
+                    </Tooltip>
+                  </HStack>
 
-              <TransactionsChart />
-            </VStack>
-          </Box>
-        </GridItem>
-      </Grid>
-      <TransactionList
-        title="All Transactions"
-        showAll={true}
-        txs={txs?.length ? txs : []}
-        totalTxs={totalTxs}
-        page={page}
-        setPage={setPage}
-        loading={loadingTx}
-      />
-    </GradientBackground>
+                  <TransactionsChart />
+                </VStack>
+              </Box>
+            </GridItem>
+          </Grid>
+          <TransactionList
+            title="All Transactions"
+            showAll={true}
+            txs={txs?.length ? txs : []}
+            totalTxs={totalTxs}
+            page={page}
+            setPage={setPage}
+            loading={loadingTx}
+          />
+        </GradientBackground>
+      </main>
+    </>
   )
 }

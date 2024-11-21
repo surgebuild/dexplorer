@@ -135,7 +135,7 @@ export default function DetailBlock() {
     <>
       <Head>
         <title>Detail Block | Surge Explorer</title>
-        <meta name="description" content="Block | Dexplorer" />
+        <meta name="description" content="Block | Surge Explorer" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
