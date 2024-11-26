@@ -45,9 +45,9 @@ export default function Validators() {
     <GradientBackground title="Validators">
       <Grid templateColumns="repeat(12, 1fr)" gap={5} mb={9}>
         <GridItem
-          colSpan={{ base: 12, md: 3 }}
+          colSpan={{ base: 12, md: 8 }}
           display={'flex'}
-          flexDirection={{ base: 'row', md: 'column' }}
+          flexDirection={{ base: 'row', md: 'row' }}
           gap={5}
         >
           <Skeleton isLoaded={isLoaded} width={{ base: '50%', md: '100%' }}>
@@ -70,12 +70,12 @@ export default function Validators() {
           </Skeleton>
         </GridItem>
 
-        <GridItem
+        {/* <GridItem
           colSpan={{ base: 12, md: 9 }}
           bg={'gray-900'}
           opacity={'35%'}
           borderRadius={'8px'}
-        ></GridItem>
+        ></GridItem> */}
       </Grid>
       {/* @ts-ignore */}
       <ValidatorsList title="All Validators" list={validators} />

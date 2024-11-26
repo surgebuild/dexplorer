@@ -124,7 +124,7 @@ export default function Proposals() {
     <>
       <Head>
         <title>Proposals | Surge Explorer</title>
-        <meta name="description" content="Proposals | Dexplorer" />
+        <meta name="description" content="Proposals | Surge Explorer" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>

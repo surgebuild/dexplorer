@@ -162,7 +162,7 @@ export default function Blocks() {
     <>
       <Head>
         <title>Blocks | Surge Explorer</title>
-        <meta name="description" content="Blocks | Dexplorer" />
+        <meta name="description" content="Blocks | Surge Explorer" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -172,17 +172,26 @@ export default function Blocks() {
             <Box
               mt={8}
               bg={'dark-bg'}
-              borderRadius={4}
+              borderRadius={'12px'}
               border={'1px'}
               borderColor={'gray-900'}
             >
+              <Text
+                fontWeight={'500'}
+                fontSize={'16px'}
+                lineHeight={'25px'}
+                mb={2}
+                px={6}
+                color={'text-50'}
+                paddingTop={8}
+              >
+                All Blocks
+              </Text>
               <TableContainer>
                 <Table variant="simple">
                   <Thead>
                     <Tr>
-                      <Th>
-                        <b>Height</b>
-                      </Th>
+                      <Th>Height</Th>
                       <Th>App Hash</Th>
                       <Th>Txs</Th>
                       <Th>Time</Th>
@@ -192,7 +201,7 @@ export default function Blocks() {
                     <Tbody>
                       {blocks.map((block) => (
                         <Tr key={block.height}>
-                          <Td>
+                          <Td fontSize={{ base: 'xs', md: 'sm' }}>
                             <Link
                               as={NextLink}
                               href={'/blocks/' + block.height}
@@ -209,10 +218,16 @@ export default function Blocks() {
                               </Text>
                             </Link>
                           </Td>
-                          <Td>{block.appHash}</Td>
-                          <Td>{block.txCount}</Td>
+                          <Td fontSize={{ base: 'xs', md: 'sm' }}>
+                            {block.appHash}
+                          </Td>
+                          <Td fontSize={{ base: 'xs', md: 'sm' }}>
+                            {block.txCount}
+                          </Td>
                           {block.Timestamp && (
-                            <Td>{getRelativeTime(block.Timestamp)}</Td>
+                            <Td fontSize={{ base: 'xs', md: 'sm' }}>
+                              {getRelativeTime(block.Timestamp)}
+                            </Td>
                           )}
                         </Tr>
                       ))}

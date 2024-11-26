@@ -164,7 +164,7 @@ export default function Home() {
     <>
       <Head>
         <title>Home | Surge Explorer</title>
-        <meta name="description" content="Home | Dexplorer" />
+        <meta name="description" content="Home | Surge Explorer" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -179,7 +179,11 @@ export default function Home() {
           maxHeight={'430px'}
           alt="pattern"
         />
-        <Box position="relative">
+        <Box
+          position="relative"
+          paddingLeft={{ md: 14 }}
+          paddingRight={{ md: 14 }}
+        >
           <Text
             fontSize={{ base: '28px', md: '40px' }}
             lineHeight="52px"
