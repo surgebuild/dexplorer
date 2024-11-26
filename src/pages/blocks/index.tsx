@@ -39,7 +39,7 @@ import { selectNewBlock, selectTxEvent } from '@/store/streamSlice'
 import { getRelativeTime } from '@/utils'
 import { getTypeMsg, timeFromNow, trimHash } from '@/utils/helper'
 
-const MAX_ROWS = 30
+const MAX_ROWS = 20
 
 interface Tx {
   TxEvent: TxEvent
@@ -68,40 +68,47 @@ export default function Blocks() {
   }, [newBlock])
 
   useEffect(() => {
-    const fetchBlocks = async () => {
+    const fetchBlocks = async (retries = 3) => {
       const restEndpoint = 'https://rpc.devnet.surge.dev'
       const searchParams = {
         query: `"block.height>0"`,
-        per_page: '30',
+        per_page: '20',
         page: `${page}`,
         order_by: `"desc"`,
       }
 
-      try {
-        setLoadingBlocks(true)
-        const { blocksData, blocksCount } = await getBlocksByRestApi(
-          restEndpoint,
-          searchParams
-        )
-        const formattedBlocks = blocksData.map((block: any) => {
-          return {
+      for (let attempt = 1; attempt <= retries; attempt++) {
+        try {
+          setLoadingBlocks(true)
+          const { blocksData, blocksCount } = await getBlocksByRestApi(
+            restEndpoint,
+            searchParams
+          )
+
+          const formattedBlocks = blocksData.map((block: any) => ({
             height: block.block.header.height,
             appHash: block.block.header.app_hash,
             Timestamp: block.block.header.time,
             txCount: block.block.data.txs.length,
+          }))
+
+          setLoadingBlocks(false)
+          setBlocks(formattedBlocks)
+          setTotalBlocks(blocksCount)
+          return // Exit the function on success
+        } catch (error) {
+          console.error(`Attempt ${attempt} failed:`, error)
+
+          if (attempt === retries) {
+            setLoadingBlocks(false)
+            console.error('Exhausted all retry attempts.')
           }
-        })
-        setLoadingBlocks(false)
-        setBlocks(formattedBlocks)
-        setTotalBlocks(blocksCount)
-      } catch (error) {
-        console.error('Error fetching transactions from REST API:', error)
-        setLoadingBlocks(false)
+        }
       }
     }
 
     fetchBlocks()
-  }, [page])
+  }, [page]) // Always run the useEffect, page determines data fetching
 
   const updateBlocks = (block: NewBlockEvent) => {
     const formattedBlock = {
@@ -249,14 +256,17 @@ export default function Blocks() {
                   )}
                 </Table>
                 {blocks.length > 18 && (
-                  <Box display={'flex'} justifyContent={'center'}>
+                  <Box
+                    display={'flex'}
+                    justifyContent={{ md: 'center', base: 'space-around' }}
+                  >
                     <HStack
                       justifyContent="space-between"
                       alignSelf={''}
                       mt={4}
                       px={6}
                       pb={4}
-                      width={'50%'}
+                      width={{ md: '50%', base: 'full' }}
                     >
                       <Button
                         onClick={handlePreviousPage}
@@ -269,7 +279,7 @@ export default function Blocks() {
                         Previous
                       </Button>
                       <Text>
-                        Page {page} of {(totalBlocks / 30).toFixed(0)}
+                        Page {page} of {(totalBlocks / 20).toFixed(0)}
                       </Text>
                       <Button
                         onClick={handleNextPage}
