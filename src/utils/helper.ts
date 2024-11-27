@@ -10,10 +10,10 @@ export const timeFromNow = (date: string): string => {
   return dayjs(date).fromNow()
 }
 
-export const trimHash = (txHash: Uint8Array): string => {
+export const trimHash = (txHash: Uint8Array, length = 6): string => {
   const hash = toHex(txHash).toUpperCase()
-  const first = hash.slice(0, 5)
-  const last = hash.slice(hash.length - 5, hash.length)
+  const first = hash.slice(0, length)
+  const last = hash.slice(hash.length - length, hash.length)
   return first + '...' + last
 }
 

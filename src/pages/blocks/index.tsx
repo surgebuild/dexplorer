@@ -34,12 +34,17 @@ import { FiCheck, FiChevronRight, FiHome, FiX } from 'react-icons/fi'
 import { useSelector } from 'react-redux'
 
 import GradientBackground from '@/components/shared/GradientBackground'
-import { getBlocksByRestApi } from '@/rpc/query'
+import { getBlocksByRestApi, getLatestBlocks } from '@/rpc/query'
 import { selectNewBlock, selectTxEvent } from '@/store/streamSlice'
 import { getRelativeTime } from '@/utils'
-import { getTypeMsg, timeFromNow, trimHash } from '@/utils/helper'
+import {
+  getTypeMsg,
+  shortenAddress,
+  timeFromNow,
+  trimHash,
+} from '@/utils/helper'
 
-const MAX_ROWS = 20
+const MAX_ROWS = 30
 
 interface Tx {
   TxEvent: TxEvent
@@ -68,7 +73,7 @@ export default function Blocks() {
   }, [newBlock])
 
   useEffect(() => {
-    const fetchBlocks = async (retries = 3) => {
+    const fetchBlocks = async () => {
       const restEndpoint = 'https://rpc.devnet.surge.dev'
       const searchParams = {
         query: `"block.height>0"`,
@@ -77,33 +82,23 @@ export default function Blocks() {
         order_by: `"desc"`,
       }
 
-      for (let attempt = 1; attempt <= retries; attempt++) {
-        try {
-          setLoadingBlocks(true)
-          const { blocksData, blocksCount } = await getBlocksByRestApi(
-            restEndpoint,
-            searchParams
-          )
+      try {
+        setLoadingBlocks(true)
+        const { blocksData, blocksCount } = await getLatestBlocks()
 
-          const formattedBlocks = blocksData.map((block: any) => ({
-            height: block.block.header.height,
-            appHash: block.block.header.app_hash,
-            Timestamp: block.block.header.time,
-            txCount: block.block.data.txs.length,
-          }))
+        const formattedBlocks = blocksData.map((block: any) => ({
+          height: block.header.height,
+          appHash: block.header.app_hash,
+          Timestamp: block.header.time,
+          txCount: block.num_txs,
+        }))
 
-          setLoadingBlocks(false)
-          setBlocks(formattedBlocks)
-          setTotalBlocks(blocksCount)
-          return // Exit the function on success
-        } catch (error) {
-          console.error(`Attempt ${attempt} failed:`, error)
-
-          if (attempt === retries) {
-            setLoadingBlocks(false)
-            console.error('Exhausted all retry attempts.')
-          }
-        }
+        setLoadingBlocks(false)
+        setBlocks(formattedBlocks)
+        setTotalBlocks(blocksCount)
+      } catch (error) {
+        setLoadingBlocks(false)
+        console.error('Exhausted all retry attempts.')
       }
     }
 
@@ -153,17 +148,17 @@ export default function Blocks() {
     return ''
   }
 
-  const handlePreviousPage = () => {
-    if (page > 1) {
-      setPage!(page - 1)
-    }
-  }
+  // const handlePreviousPage = () => {
+  //   if (page > 1) {
+  //     setPage!(page - 1)
+  //   }
+  // }
 
-  const handleNextPage = () => {
-    if (page < totalBlocks / 20) {
-      setPage!(page + 1)
-    }
-  }
+  // const handleNextPage = () => {
+  //   if (page < totalBlocks / 20) {
+  //     setPage!(page + 1)
+  //   }
+  // }
 
   return (
     <>
@@ -192,7 +187,7 @@ export default function Blocks() {
                 color={'text-50'}
                 paddingTop={8}
               >
-                All Blocks
+                Latest Blocks
               </Text>
               <TableContainer>
                 <Table variant="simple">
@@ -225,8 +220,11 @@ export default function Blocks() {
                               </Text>
                             </Link>
                           </Td>
-                          <Td fontSize={{ base: 'xs', md: 'sm' }}>
-                            {block.appHash}
+                          <Td
+                            fontSize={{ base: 'xs', md: 'sm' }}
+                            textTransform={'capitalize'}
+                          >
+                            {trimHash(block.appHash, 10)}
                           </Td>
                           <Td fontSize={{ base: 'xs', md: 'sm' }}>
                             {block.txCount}
@@ -255,7 +253,7 @@ export default function Blocks() {
                     </Tbody>
                   )}
                 </Table>
-                {blocks.length > 18 && (
+                {/* {blocks.length > 18 && (
                   <Box
                     display={'flex'}
                     justifyContent={{ md: 'center', base: 'space-around' }}
@@ -293,7 +291,7 @@ export default function Blocks() {
                       </Button>
                     </HStack>
                   </Box>
-                )}
+                )} */}
               </TableContainer>
             </Box>
           </Box>
