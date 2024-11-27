@@ -133,8 +133,8 @@ export default function Transactions() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main>
-        <GradientBackground title="Transactions">
+      <GradientBackground title="Transactions">
+        <main>
           <Grid templateColumns="repeat(12, 1fr)" gap={5} mb={9}>
             <GridItem
               colSpan={{ base: 12, md: 4 }}
@@ -203,8 +203,8 @@ export default function Transactions() {
             setPage={setPage}
             loading={loadingTx}
           />
-        </GradientBackground>
-      </main>
+        </main>
+      </GradientBackground>
     </>
   )
 }

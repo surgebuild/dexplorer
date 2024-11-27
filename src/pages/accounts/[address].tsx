@@ -33,6 +33,7 @@ import { useEffect, useState } from 'react'
 import { FiChevronRight, FiHome } from 'react-icons/fi'
 import { useSelector } from 'react-redux'
 
+import GradientBackground from '@/components/shared/GradientBackground'
 import {
   getAccount,
   getAllBalances,
@@ -143,6 +144,13 @@ export default function DetailAccount() {
     return ''
   }
 
+  function parseMemo(response: string) {
+    const legiblePart = response.replace(/[^\x20-\x7E]+/g, '') // Removes non-ASCII printable characters
+    return legiblePart
+  }
+
+  console.log(txs, 'txs')
+
   return (
     <>
       <Head>
@@ -151,207 +159,255 @@ export default function DetailAccount() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main>
-        <HStack h="24px">
-          <Heading size={'md'}>Account</Heading>
-          <Divider borderColor={'gray'} size="10px" orientation="vertical" />
-          <Link
-            as={NextLink}
-            href={'/'}
-            style={{ textDecoration: 'none' }}
-            _focus={{ boxShadow: 'none' }}
-            display="flex"
-            justifyContent="center"
+      <GradientBackground title="Account Detail">
+        <main>
+          {/* <HStack h="24px">
+            <Heading size={'md'}>Account</Heading>
+            <Divider borderColor={'gray'} size="10px" orientation="vertical" />
+            <Link
+              as={NextLink}
+              href={'/'}
+              style={{ textDecoration: 'none' }}
+              _focus={{ boxShadow: 'none' }}
+              display="flex"
+              justifyContent="center"
+            >
+              <Icon
+                fontSize="16"
+                color={useColorModeValue('light-theme', 'dark-theme')}
+                as={FiHome}
+              />
+            </Link>
+            <Icon fontSize="16" as={FiChevronRight} />
+            <Text>Accounts</Text>
+            <Icon fontSize="16" as={FiChevronRight} />
+            <Text>Detail</Text>
+          </HStack> */}
+          <Box
+            mt={{ md: 8, base: 0 }}
+            border={'1px'}
+            borderColor={'gray-900'}
+            bg={'dark-bg'}
+            shadow={'base'}
+            borderRadius={'xl'}
+            p={4}
           >
-            <Icon
-              fontSize="16"
-              color={useColorModeValue('light-theme', 'dark-theme')}
-              as={FiHome}
-            />
-          </Link>
-          <Icon fontSize="16" as={FiChevronRight} />
-          <Text>Accounts</Text>
-          <Icon fontSize="16" as={FiChevronRight} />
-          <Text>Detail</Text>
-        </HStack>
-        <Box
-          mt={8}
-          bg={useColorModeValue('light-container', 'dark-container')}
-          shadow={'base'}
-          borderRadius={4}
-          p={4}
-        >
-          <Heading size={'md'} mb={4}>
-            Profile
-          </Heading>
-          <Divider borderColor={'gray'} mb={4} />
-          <TableContainer>
-            <Table variant="unstyled" size={'sm'}>
-              <Tbody>
-                <Tr>
-                  <Td pl={0} width={150}>
-                    <b>Address</b>
-                  </Td>
-                  <Td>{address}</Td>
-                </Tr>
-                <Tr>
-                  <Td pl={0} width={150}>
-                    <b>Pub Key</b>
-                  </Td>
-                  <Td>
-                    <Tabs>
-                      <TabList>
-                        <Tab>@Type</Tab>
-                        <Tab>Key</Tab>
-                      </TabList>
-                      <TabPanels>
-                        <TabPanel>
-                          <p>{account?.pubkey?.type}</p>
-                        </TabPanel>
-                        <TabPanel>
-                          <p>{account?.pubkey?.value}</p>
-                        </TabPanel>
-                      </TabPanels>
-                    </Tabs>
-                  </Td>
-                </Tr>
-                <Tr>
-                  <Td pl={0} width={150}>
-                    <b>Account Number</b>
-                  </Td>
-                  <Td>{account?.accountNumber}</Td>
-                </Tr>
-                <Tr>
-                  <Td pl={0} width={150}>
-                    <b>Sequence</b>
-                  </Td>
-                  <Td>{account?.sequence}</Td>
-                </Tr>
-              </Tbody>
-            </Table>
-          </TableContainer>
-        </Box>
-
-        <Box
-          mt={8}
-          bg={useColorModeValue('light-container', 'dark-container')}
-          shadow={'base'}
-          borderRadius={4}
-          p={4}
-        >
-          <Heading size={'md'} mb={4}>
-            Balances
-          </Heading>
-          <Heading size={'sm'} mb={4}></Heading>
-          <Tabs size="md">
-            <TabList>
-              <Tab>Available</Tab>
-              <Tab>Delegated</Tab>
-            </TabList>
-            <TabPanels>
-              <TabPanel>
-                <TableContainer>
-                  <Table variant="simple">
-                    <Thead>
-                      <Tr>
-                        <Th>Denom</Th>
-                        <Th>Amount</Th>
-                      </Tr>
-                    </Thead>
-                    <Tbody>
-                      {allBalances.map((item, index) => (
-                        <Tr key={index}>
-                          <Td>{item.denom}</Td>
-                          <Td>{item.amount}</Td>
-                        </Tr>
-                      ))}
-                    </Tbody>
-                  </Table>
-                </TableContainer>
-              </TabPanel>
-              <TabPanel>
-                <TableContainer>
-                  <Table variant="simple">
-                    <Thead>
-                      <Tr>
-                        <Th>Denom</Th>
-                        <Th>Amount</Th>
-                      </Tr>
-                    </Thead>
-                    <Tbody>
-                      <Tr>
-                        <Td>{balanceStaked?.denom}</Td>
-                        <Td>{balanceStaked?.amount}</Td>
-                      </Tr>
-                    </Tbody>
-                  </Table>
-                </TableContainer>
-              </TabPanel>
-            </TabPanels>
-          </Tabs>
-        </Box>
-
-        <Box
-          mt={8}
-          bg={useColorModeValue('light-container', 'dark-container')}
-          shadow={'base'}
-          borderRadius={4}
-          p={4}
-        >
-          <Heading size={'md'} mb={4}>
-            Transactions
-          </Heading>
-          <Divider borderColor={'gray'} mb={4} />
-          <TableContainer>
-            <Table variant="simple">
-              <Thead>
-                <Tr>
-                  <Th>Tx Hash</Th>
-                  <Th>Messages</Th>
-                  <Th>Memo</Th>
-                  <Th>Height</Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                {txs.map((tx) => (
-                  <Tr key={toHex(tx.hash)}>
-                    <Td>
-                      <Link
-                        as={NextLink}
-                        href={'/txs/' + toHex(tx.hash).toUpperCase()}
-                        style={{ textDecoration: 'none' }}
-                        _focus={{ boxShadow: 'none' }}
-                      >
-                        <Text
-                          color={useColorModeValue('light-theme', 'dark-theme')}
-                        >
-                          {trimHash(tx.hash)}
-                        </Text>
-                      </Link>
+            <Heading size={'md'} mb={4}>
+              Profile
+            </Heading>
+            <Divider borderColor={'gray'} mb={4} />
+            <TableContainer>
+              <Table variant="unstyled" size={'sm'}>
+                <Tbody>
+                  <Tr>
+                    <Td pl={0} width={150}>
+                      <b>Address</b>
                     </Td>
-                    <Td>{renderMessages(tx.data.messages)}</Td>
-                    <Td>{tx.data.memo}</Td>
+                    <Td>{address}</Td>
+                  </Tr>
+                  <Tr>
+                    <Td pl={0} width={150}>
+                      <b>Pub Key</b>
+                    </Td>
                     <Td>
-                      <Link
-                        as={NextLink}
-                        href={'/blocks/' + tx.height}
-                        style={{ textDecoration: 'none' }}
-                        _focus={{ boxShadow: 'none' }}
-                      >
-                        <Text
-                          color={useColorModeValue('light-theme', 'dark-theme')}
-                        >
-                          {tx.height}
-                        </Text>
-                      </Link>
+                      <Tabs>
+                        <TabList _active={{ color: 'primary-700' }}>
+                          <Tab
+                            _selected={{
+                              color: 'primary-700',
+                              borderBottom: '2px solid #AD3014',
+                            }}
+                          >
+                            @Type
+                          </Tab>
+                          <Tab
+                            _selected={{
+                              color: 'primary-700',
+                              borderBottom: '2px solid #AD3014',
+                            }}
+                          >
+                            Key
+                          </Tab>
+                        </TabList>
+                        <TabPanels>
+                          <TabPanel>
+                            <p>{account?.pubkey?.type}</p>
+                          </TabPanel>
+                          <TabPanel>
+                            <p>{account?.pubkey?.value}</p>
+                          </TabPanel>
+                        </TabPanels>
+                      </Tabs>
                     </Td>
                   </Tr>
-                ))}
-              </Tbody>
-            </Table>
-          </TableContainer>
-        </Box>
-      </main>
+                  <Tr>
+                    <Td pl={0} width={150}>
+                      <b>Account Number</b>
+                    </Td>
+                    <Td>{account?.accountNumber}</Td>
+                  </Tr>
+                  <Tr>
+                    <Td pl={0} width={150}>
+                      <b>Sequence</b>
+                    </Td>
+                    <Td>{account?.sequence}</Td>
+                  </Tr>
+                </Tbody>
+              </Table>
+            </TableContainer>
+          </Box>
+
+          <Box
+            border={'1px'}
+            borderColor={'gray-900'}
+            bg={'dark-bg'}
+            shadow={'base'}
+            borderRadius={'xl'}
+            mt={8}
+            p={4}
+          >
+            <Heading size={'md'} mb={4}>
+              Balances
+            </Heading>
+            <Heading size={'sm'} mb={4}></Heading>
+            <Tabs size="md">
+              <TabList>
+                <Tab
+                  _selected={{
+                    color: 'primary-700',
+                    borderBottom: '2px solid #AD3014',
+                  }}
+                >
+                  Available
+                </Tab>
+                <Tab
+                  _selected={{
+                    color: 'primary-700',
+                    borderBottom: '2px solid #AD3014',
+                  }}
+                >
+                  Delegated
+                </Tab>
+              </TabList>
+              <TabPanels>
+                <TabPanel>
+                  <TableContainer>
+                    <Table variant="simple">
+                      <Thead>
+                        <Tr>
+                          <Th>Denom</Th>
+                          <Th>Amount</Th>
+                        </Tr>
+                      </Thead>
+                      <Tbody>
+                        {allBalances.map((item, index) => (
+                          <Tr key={index}>
+                            <Td>{item.denom}</Td>
+                            <Td>{item.amount}</Td>
+                          </Tr>
+                        ))}
+                      </Tbody>
+                    </Table>
+                  </TableContainer>
+                </TabPanel>
+                <TabPanel>
+                  <TableContainer>
+                    <Table variant="simple">
+                      <Thead>
+                        <Tr>
+                          <Th>Denom</Th>
+                          <Th>Amount</Th>
+                        </Tr>
+                      </Thead>
+                      <Tbody>
+                        <Tr>
+                          <Td>{balanceStaked?.denom}</Td>
+                          <Td>{balanceStaked?.amount}</Td>
+                        </Tr>
+                      </Tbody>
+                    </Table>
+                  </TableContainer>
+                </TabPanel>
+              </TabPanels>
+            </Tabs>
+          </Box>
+
+          <Box
+            border={'1px'}
+            borderColor={'gray-900'}
+            bg={'dark-bg'}
+            shadow={'base'}
+            borderRadius={'xl'}
+            mt={8}
+            p={4}
+          >
+            <Heading size={'md'} mb={4}>
+              Transactions
+            </Heading>
+            <Divider borderColor={'gray'} mb={4} />
+            <TableContainer>
+              <Table variant="simple">
+                <Thead>
+                  <Tr>
+                    <Th>Tx Hash</Th>
+                    <Th>Memo</Th>
+                    <Th>Height</Th>
+                    <Th>Messages</Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {txs.map((tx) => (
+                    <Tr key={toHex(tx.hash)}>
+                      <Td>
+                        <Link
+                          as={NextLink}
+                          href={'/txs/' + toHex(tx.hash).toUpperCase()}
+                          style={{ textDecoration: 'none' }}
+                          _focus={{ boxShadow: 'none' }}
+                        >
+                          <Text
+                            fontSize={{ base: 'xs', md: 'sm' }}
+                            color={useColorModeValue(
+                              'light-theme',
+                              'dark-theme'
+                            )}
+                          >
+                            {trimHash(tx.hash)}
+                          </Text>
+                        </Link>
+                      </Td>
+                      <Td fontSize={{ base: 'xs', md: 'sm' }}>
+                        {parseMemo(tx.data.memo)}
+                      </Td>
+                      <Td>
+                        <Link
+                          as={NextLink}
+                          href={'/blocks/' + tx.height}
+                          style={{ textDecoration: 'none' }}
+                          _focus={{ boxShadow: 'none' }}
+                        >
+                          <Text
+                            fontSize={{ base: 'xs', md: 'sm' }}
+                            color={useColorModeValue(
+                              'light-theme',
+                              'dark-theme'
+                            )}
+                          >
+                            {tx.height}
+                          </Text>
+                        </Link>
+                      </Td>
+                      <Td fontSize={{ base: 'xs', md: 'sm' }}>
+                        {renderMessages(tx.data.messages)}
+                      </Td>
+                    </Tr>
+                  ))}
+                </Tbody>
+              </Table>
+            </TableContainer>
+          </Box>
+        </main>
+      </GradientBackground>
     </>
   )
 }

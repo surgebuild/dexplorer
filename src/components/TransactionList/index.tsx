@@ -234,14 +234,14 @@ export default function TransactionList({
         </Box>
       )}
       {showAll && txs.length > 18 && (
-        <Box display={'flex'} justifyContent={'center'}>
+        <Box display={'flex'} justifyContent={{ md: 'center' }}>
           <HStack
             justifyContent="space-between"
             alignSelf={''}
             mt={4}
             px={6}
             pb={4}
-            width={'50%'}
+            width={{ md: '50%', base: 'full' }}
           >
             <Button
               onClick={handlePreviousPage}

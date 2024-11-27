@@ -167,6 +167,34 @@ export async function getBlocksByRestApi(
   }
 }
 
+export async function getLatestBlocks(maxHeight?: number) {
+  try {
+    const response = await fetch(
+      `https://rpc.devnet.surge.dev/blockchain?${
+        maxHeight ? `maxHeight=${maxHeight}` : ''
+      } `,
+      {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+        },
+        cache: 'no-cache',
+      }
+    )
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
+    const data = await response.json()
+    return {
+      blocksData: data.result ? data.result.block_metas : [],
+      blocksCount: data.result ? Number(data.result.last_height) : 0,
+    }
+  } catch (error) {
+    console.error('Error fetching transactions:', error)
+    return { blocksData: [], blocksCount: 0 }
+  }
+}
+
 export async function getBlockDetails(restEndpoint: string, height: string) {
   try {
     const response = await fetch(`${restEndpoint}/block?height=${height}`, {
