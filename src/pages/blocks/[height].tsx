@@ -66,7 +66,6 @@ export default function DetailBlock() {
     if (block?.txs.length && !txs.length) {
       for (const rawTx of block.txs) {
         const data = TxData.decode(rawTx)
-        console.log(data, 'Tx data')
         const hash = sha256(rawTx)
         setTxs((prevTxs) => [
           ...prevTxs,

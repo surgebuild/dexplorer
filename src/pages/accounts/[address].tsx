@@ -149,8 +149,6 @@ export default function DetailAccount() {
     return legiblePart
   }
 
-  console.log(txs, 'txs')
-
   return (
     <>
       <Head>

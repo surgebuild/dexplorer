@@ -74,7 +74,6 @@ export default function Transactions() {
         setLoadingTx(false)
         setTxs(formattedTxs)
         setTotalTxs(txsCount)
-        console.log(formattedTxs, 'formattedTxs')
       } catch (error) {
         setLoadingTx(false)
         console.error('Error fetching transactions from REST API:', error)

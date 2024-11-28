@@ -195,8 +195,6 @@ export default function DetailBlock() {
   )
   const { amount, sender, recipient } = getTransferDetails(txTransferEvent)
 
-  console.log(tx, 'transaction')
-
   return (
     <>
       <Head>
