@@ -154,8 +154,11 @@ export default function DetailAccount() {
   return (
     <>
       <Head>
-        <title>Detail Account | Surge Explorer</title>
-        <meta name="description" content="Account | Dexplorer" />
+        <title>Detail Account | Surge Devnet Explorer</title>
+        <meta
+          name="description"
+          content="Explore the Surge Devnet blockchain with ease. Access real-time data, transactions, and blockchain analytics."
+        />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>

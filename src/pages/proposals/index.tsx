@@ -123,8 +123,11 @@ export default function Proposals() {
   return (
     <>
       <Head>
-        <title>Proposals | Surge Explorer</title>
-        <meta name="description" content="Proposals | Surge Explorer" />
+        <title>Proposals | Surge Devnet Explorer</title>
+        <meta
+          name="description"
+          content="Explore the Surge Devnet blockchain with ease. Access real-time data, transactions, and blockchain analytics."
+        />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
