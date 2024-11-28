@@ -163,10 +163,21 @@ export default function Blocks() {
   return (
     <>
       <Head>
-        <title>Blocks | Surge Explorer</title>
-        <meta name="description" content="Blocks | Surge Explorer" />
+        <title>Blocks | Surge Devnet Explorer</title>
+        <meta
+          name="description"
+          content="Explore the Surge Devnet blockchain with ease. Access real-time data, transactions, and blockchain analytics."
+        />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
+        <meta
+          property="og:image"
+          content="https://surge.sfo3.cdn.digitaloceanspaces.com/assets/surgeExplorer/surge_explorer_meta.png"
+        />
+        <meta
+          property="twitter:image"
+          content="https://surge.sfo3.cdn.digitaloceanspaces.com/assets/surgeExplorer/surge_explorer_meta.png"
+        />
       </Head>
       <Box>
         <GradientBackground title="Blocks">
@@ -210,27 +221,27 @@ export default function Blocks() {
                               style={{ textDecoration: 'none' }}
                               _focus={{ boxShadow: 'none' }}
                             >
-                              <Text
-                                color={useColorModeValue(
-                                  'light-theme',
-                                  'dark-theme'
-                                )}
-                              >
-                                {block.height}
-                              </Text>
+                              <Text color={'light-theme'}>{block.height}</Text>
                             </Link>
                           </Td>
                           <Td
                             fontSize={{ base: 'xs', md: 'sm' }}
                             textTransform={'capitalize'}
+                            color={'white'}
                           >
                             {trimHash(block.appHash, 10)}
                           </Td>
-                          <Td fontSize={{ base: 'xs', md: 'sm' }}>
+                          <Td
+                            fontSize={{ base: 'xs', md: 'sm' }}
+                            color={'white'}
+                          >
                             {block.txCount}
                           </Td>
                           {block.Timestamp && (
-                            <Td fontSize={{ base: 'xs', md: 'sm' }}>
+                            <Td
+                              fontSize={{ base: 'xs', md: 'sm' }}
+                              color={'white'}
+                            >
                               {getRelativeTime(block.Timestamp)}
                             </Td>
                           )}

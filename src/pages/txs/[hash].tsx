@@ -195,15 +195,24 @@ export default function DetailBlock() {
   )
   const { amount, sender, recipient } = getTransferDetails(txTransferEvent)
 
-  console.log(tx, 'transaction')
-
   return (
     <>
       <Head>
-        <title>Detail Transaction | Surge Explorer</title>
-        <meta name="description" content="Txs | Surge Explorer" />
+        <title>Detail Transaction | Surge Devnet Explorer</title>
+        <meta
+          name="description"
+          content="Explore the Surge Devnet blockchain with ease. Access real-time data, transactions, and blockchain analytics."
+        />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
+        <meta
+          property="og:image"
+          content="https://surge.sfo3.cdn.digitaloceanspaces.com/assets/surgeExplorer/surge_explorer_meta.png"
+        />
+        <meta
+          property="twitter:image"
+          content="https://surge.sfo3.cdn.digitaloceanspaces.com/assets/surgeExplorer/surge_explorer_meta.png"
+        />
       </Head>
       <Box>
         <GradientBackground title="Transaction Details">

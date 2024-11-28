@@ -135,7 +135,7 @@ export default function TransactionList({
                     borderColor={'gray-900'}
                     _last={{ borderBottom: 'none' }}
                   >
-                    <Td border={'none'} fontSize={'xs'}>
+                    <Td border={'none'} fontSize={'xs'} color={'text-50'}>
                       <Link
                         as={NextLink}
                         href={'/txs/' + transaction.hash}

@@ -21,10 +21,21 @@ export default function Parameters() {
   return (
     <>
       <Head>
-        <title>Parameters | Surge Explorer</title>
-        <meta name="description" content="Parameters | Surge Explorer" />
+        <title>Parameters | Surge Devnet Explorer</title>
+        <meta
+          name="description"
+          content="Explore the Surge Devnet blockchain with ease. Access real-time data, transactions, and blockchain analytics."
+        />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
+        <meta
+          property="og:image"
+          content="https://surge.sfo3.cdn.digitaloceanspaces.com/assets/surgeExplorer/surge_explorer_meta.png"
+        />
+        <meta
+          property="twitter:image"
+          content="https://surge.sfo3.cdn.digitaloceanspaces.com/assets/surgeExplorer/surge_explorer_meta.png"
+        />
       </Head>
       <main>
         <HStack h="24px">

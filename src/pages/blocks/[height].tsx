@@ -66,7 +66,6 @@ export default function DetailBlock() {
     if (block?.txs.length && !txs.length) {
       for (const rawTx of block.txs) {
         const data = TxData.decode(rawTx)
-        console.log(data, 'Tx data')
         const hash = sha256(rawTx)
         setTxs((prevTxs) => [
           ...prevTxs,
@@ -134,10 +133,21 @@ export default function DetailBlock() {
   return (
     <>
       <Head>
-        <title>Detail Block | Surge Explorer</title>
-        <meta name="description" content="Block | Surge Explorer" />
+        <title>Detail Block | Surge Devnet Explorer</title>
+        <meta
+          name="description"
+          content="Explore the Surge Devnet blockchain with ease. Access real-time data, transactions, and blockchain analytics."
+        />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
+        <meta
+          property="og:image"
+          content="https://surge.sfo3.cdn.digitaloceanspaces.com/assets/surgeExplorer/surge_explorer_meta.png"
+        />
+        <meta
+          property="twitter:image"
+          content="https://surge.sfo3.cdn.digitaloceanspaces.com/assets/surgeExplorer/surge_explorer_meta.png"
+        />
       </Head>
       <Box>
         <GradientBackground title={`Block #${block?.header.height}`}>
