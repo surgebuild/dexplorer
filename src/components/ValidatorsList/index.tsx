@@ -91,7 +91,7 @@ export default function ValidatorsList({ title, list }: IValidatorsList) {
                       px={2}
                       py={1}
                       borderRadius={'8px'}
-                      bg={getColor(1)}
+                      bg={getColor(0)}
                       className="label_regular"
                       color={'white'}
                       width={'max-content'}

@@ -162,7 +162,7 @@ export default function Transactions() {
                   color="green.600"
                   name="TOTAL TXNS"
                   value={`#${totalTxs ?? '-'}`}
-                  tooltipText="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"
+                  tooltipText="The total number of transactions processed on the Surge Devnet, including all transfers, inscriptions, and other activities."
                 />
               </Skeleton>
               {/* <Skeleton isLoaded={isLoaded} width={{ base: '50%', md: '100%' }}>

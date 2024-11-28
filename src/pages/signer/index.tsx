@@ -23,9 +23,9 @@ export default function Signers() {
     <GradientBackground title="Signers">
       <Grid templateColumns="repeat(12, 1fr)" gap={5} mb={9}>
         <GridItem
-          colSpan={{ base: 12, md: 3 }}
+          colSpan={{ base: 12, md: 6 }}
           display={'flex'}
-          flexDirection={{ base: 'row', md: 'column' }}
+          flexDirection={{ base: 'row', md: 'row' }}
           gap={5}
         >
           <Skeleton isLoaded={isLoaded} width={{ base: '50%', md: '100%' }}>
@@ -34,19 +34,23 @@ export default function Signers() {
               color="green.600"
               name="TOTAL SIGNERS"
               value={3}
-              tooltipText=""
+              tooltipText="The total number of registered signers on the Surge Devnet, including those actively participating and those currently inactive."
             />
           </Skeleton>
           <Skeleton isLoaded={isLoaded} width={{ base: '50%', md: '100%' }}>
-            <BoxInfo name="ACTIVE SIGNERS" value={2} tooltipText="" />
+            <BoxInfo
+              name="ACTIVE SIGNERS"
+              value={2}
+              tooltipText="The number of signers currently active on the Surge Devnet, contributing to transaction signing and network consensus."
+            />
           </Skeleton>
         </GridItem>
-        <GridItem
+        {/* <GridItem
           colSpan={{ base: 12, md: 9 }}
           bg={'gray-900'}
           opacity={'35%'}
           borderRadius={'8px'}
-        ></GridItem>
+        ></GridItem> */}
       </Grid>
       <SignersList title="All Signers" />
     </GradientBackground>

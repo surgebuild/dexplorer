@@ -214,7 +214,7 @@ export default function Home() {
                   color="green.600"
                   name="TOTAL TXNS"
                   value={`#${totalTxs}`}
-                  tooltipText="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"
+                  tooltipText="The total number of transactions processed on the Surge Devnet, including all transfers, inscriptions, and other activities."
                 />
               </Skeleton>
 
@@ -222,7 +222,7 @@ export default function Home() {
                 <BoxInfo
                   name="TOTAL INSCRIPTIONS"
                   value={'#' + totalInscription}
-                  tooltipText="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"
+                  tooltipText="The total count of inscriptions created on the Surge Devnet, representing unique digital artifacts or data stored on the blockchain."
                 />
               </Skeleton>
               <Skeleton isLoaded={isLoaded}>
@@ -233,7 +233,7 @@ export default function Home() {
                       ? '#' + newBlock?.header.height
                       : '#' + status?.syncInfo.latestBlockHeight
                   }
-                  tooltipText=""
+                  tooltipText="The most recently mined block on the Surge Devnet, containing transactions and inscriptions added to the blockchain."
                 />
               </Skeleton>
               {/* <Skeleton isLoaded={isLoaded}>

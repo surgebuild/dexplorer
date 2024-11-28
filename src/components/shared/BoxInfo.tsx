@@ -37,6 +37,8 @@ export const BoxInfo = ({ name, value, tooltipText, height }: BoxInfoProps) => {
           placement="right"
           bg="gray.300"
           color="black"
+          padding={2}
+          rounded={'md'}
         >
           <Icon as={InfoOutlineIcon} w={'13px'} color="gray-500" />
         </Tooltip>
