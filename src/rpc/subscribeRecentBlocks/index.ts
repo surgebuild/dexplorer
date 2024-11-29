@@ -99,7 +99,6 @@ const setupWebSocketListeners = (
     browserWS.onclose = () => console.log('WebSocket connection closed')
   } else {
     nodeWS.on('open', () => {
-      console.log('Connected to WebSocket')
       subscribeToBlockHeaders(ws)
     })
     nodeWS.on('message', (data: WS.Data) => handleMessage(data, onData))
