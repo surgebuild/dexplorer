@@ -96,7 +96,7 @@ export default function SignersList({ title }: ISignersList) {
                     width={'max-content'}
                     textAlign={'center'}
                   >
-                    {signer.status == 1 ? 'Active' : 'Inactive'}
+                    {signer.status == 0 ? 'Active' : 'Inactive'}
                   </Text>
                 </Td>
                 <Td border={'none'} className="body2_regular" color={'text-50'}>
@@ -120,13 +120,7 @@ const signerKeyData = [
   {
     signerKey: '0xA1B2C3D4E5F67890ABCDEF1234567890ABCDEF01',
     entityName: 'Signer 1',
-    status: 1,
-    votingPower: 40,
-  },
-  {
-    signerKey: '0xB2C3D4E5F67890ABCDEF1234567890ABCDEF02A1',
-    entityName: 'Signer 2',
-    status: 1,
+    status: 0,
     votingPower: 40,
   },
   {
@@ -134,5 +128,11 @@ const signerKeyData = [
     entityName: 'Signer Gamma',
     status: 0,
     votingPower: 20,
+  },
+  {
+    signerKey: '0xB2C3D4E5F67890ABCDEF1234567890ABCDEF02A1',
+    entityName: 'Signer 2',
+    status: 1,
+    votingPower: 40,
   },
 ]

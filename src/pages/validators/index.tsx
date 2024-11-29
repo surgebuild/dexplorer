@@ -56,7 +56,7 @@ export default function Validators() {
               color="green.600"
               name="TOTAL VALIDATORS"
               value={totalValidators}
-              tooltipText=""
+              tooltipText="The total number of validators registered on the Surge Devnet, including both active and inactive participants."
               height={{ base: '120px', md: '100px' }}
             />
           </Skeleton>
@@ -64,7 +64,7 @@ export default function Validators() {
             <BoxInfo
               name="ACTIVE VALIDATORS"
               value={validatorCount}
-              tooltipText=""
+              tooltipText="The number of validators currently participating in securing the Surge Devnet by validating transactions and proposing blocks."
               height={{ base: '120px', md: '100px' }}
             />
           </Skeleton>

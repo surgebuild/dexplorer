@@ -147,7 +147,7 @@ export default function Navbar() {
                 value={inputSearch}
                 onChange={handleInputSearch}
                 borderColor="GrayText"
-                width="400px"
+                width="450px"
                 borderRadius="full"
                 focusBorderColor="#ad3014"
               />
