@@ -14,7 +14,7 @@ export const getColor = (status: string | number) => {
       return 'gray.500' // Default color if status is unknown
   }
 }
-export const getRelativeTime = (timestamp: string | Date): string => {
+export const getRelativeTime = (timestamp: string | Date, short?: boolean) => {
   const now = new Date()
   const pastDate = new Date(timestamp)
   const timeDifference = now.getTime() - pastDate.getTime() // Difference in milliseconds
@@ -23,10 +23,11 @@ export const getRelativeTime = (timestamp: string | Date): string => {
   const hours = Math.floor(timeDifference / (1000 * 60 * 60))
   const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24))
 
-  if (minutes < 1) return 'Just now'
-  if (minutes < 60) return `${minutes} minute${minutes > 1 ? 's' : ''} ago`
-  if (hours < 24) return `${hours} hour${hours > 1 ? 's' : ''} ago`
-  return `${days} day${days > 1 ? 's' : ''} ago`
+  if (minutes < 1) return `${short ? 'now' : 'Just now'}`
+  if (minutes < 60)
+    return `${minutes} ${short ? 'min' : 'minute'}${minutes > 1 ? 's' : ''} ago`
+  if (hours < 24) return `${hours} ${short ? 'h' : 'hour'} ago`
+  return `${days} ${short ? 'd' : 'day'} ago`
 }
 
 export const truncate = (hash: string, length: number = 5): string => {

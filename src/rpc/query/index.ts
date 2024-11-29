@@ -233,3 +233,31 @@ export const getTxTimeStamp = async (blockHeight: string) => {
     throw error
   }
 }
+
+export async function getBlocksFromRange(
+  tmClient: Tendermint37Client,
+  startBlock: number,
+  endBlock: number
+): Promise<{ firstBlocks: Block[]; lastBlock: Block }> {
+  const client = await StargateClient.create(tmClient)
+
+  try {
+    // Get first three blocks from the range
+    const firstBlocks = await Promise.all([
+      client.getBlock(startBlock),
+      client.getBlock(startBlock + 1),
+      client.getBlock(startBlock + 2),
+    ])
+
+    // Get the last block
+    const lastBlock = await client.getBlock(endBlock)
+
+    return {
+      firstBlocks,
+      lastBlock,
+    }
+  } catch (error) {
+    console.error('Error fetching blocks:', error)
+    throw error
+  }
+}
