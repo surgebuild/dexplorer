@@ -34,7 +34,6 @@ export default function RecentBlocks() {
       setIsLoading(true)
       const data = await getTotalInscriptions()
       const bitcoinData = data?.bitcoindata
-      console.log(bitcoinData, 'bitcoin data')
       if (bitcoinData) {
         setInscriptionData(bitcoinData)
         setError(null)
@@ -169,7 +168,6 @@ const RecentBlock = ({ bitcoinData }: any) => {
   )
   const firstThreeBlocks = blockDetails.slice(0, 3)
   const lastBlock = blockDetails.slice(-1)
-  console.log(lastBlock, 'last block')
   return (
     <Box bg={'gray-1100'} borderRadius={12} w={'100%'} marginBottom={4}>
       <Box px={4} py={5} bg="gray-1200" borderTopRadius={12}>
