@@ -204,17 +204,24 @@ export default function Blocks() {
                 <Table variant="simple">
                   <Thead>
                     <Tr>
-                      <Th>Height</Th>
-                      <Th>App Hash</Th>
-                      <Th>Txs</Th>
-                      <Th>Time</Th>
+                      <Th borderColor={'gray-900'}>Height</Th>
+                      <Th borderColor={'gray-900'}>App Hash</Th>
+                      <Th borderColor={'gray-900'}>Txs</Th>
+                      <Th borderColor={'gray-900'}>Time</Th>
                     </Tr>
                   </Thead>
                   {blocks.length > 0 && !loadingBlocks ? (
                     <Tbody>
                       {blocks.map((block) => (
-                        <Tr key={block.height}>
-                          <Td fontSize={{ base: 'xs', md: 'sm' }}>
+                        <Tr
+                          key={block.height}
+                          border={'1px'}
+                          borderColor={'gray-900'}
+                        >
+                          <Td
+                            fontSize={{ base: 'xs', md: 'sm' }}
+                            border={'none'}
+                          >
                             <Link
                               as={NextLink}
                               href={'/blocks/' + block.height}
@@ -228,12 +235,14 @@ export default function Blocks() {
                             fontSize={{ base: 'xs', md: 'sm' }}
                             textTransform={'capitalize'}
                             color={'white'}
+                            border={'none'}
                           >
                             {trimHash(block.appHash, 10)}
                           </Td>
                           <Td
                             fontSize={{ base: 'xs', md: 'sm' }}
                             color={'white'}
+                            border={'none'}
                           >
                             {block.txCount}
                           </Td>
@@ -241,6 +250,7 @@ export default function Blocks() {
                             <Td
                               fontSize={{ base: 'xs', md: 'sm' }}
                               color={'white'}
+                              border={'none'}
                             >
                               {getRelativeTime(block.Timestamp)}
                             </Td>
