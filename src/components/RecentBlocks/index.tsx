@@ -13,8 +13,7 @@ import router from 'next/router'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { getLatestBlocks, getTotalInscriptions } from '@/rpc/query'
-import { getRelativeTime } from '@/utils'
-import { shortenAddress, timeFromNow } from '@/utils/helper'
+import { shortenAddress } from '@/utils/helper'
 import { images } from '@/utils/images'
 
 export default function RecentBlocks() {
@@ -22,8 +21,6 @@ export default function RecentBlocks() {
   const [isLoading, setIsLoading] = useState(false)
   const [inscriptionData, setInscriptionData] = useState([])
   const [err, setError] = useState<any>('')
-  const [loadingBlocks, setLoadingBlocks] = useState(false)
-  const [blocks, setBlocks] = useState<any[]>([])
 
   const fetchBitcoinData = useCallback(async () => {
     try {
@@ -43,30 +40,6 @@ export default function RecentBlocks() {
     } finally {
       setIsLoading(false)
     }
-  }, [])
-
-  useEffect(() => {
-    const fetchBlocks = async () => {
-      try {
-        setLoadingBlocks(true)
-        const { blocksData } = await getLatestBlocks()
-
-        const formattedBlocks = blocksData.map((block: any) => ({
-          height: block.header.height,
-          appHash: block.header.app_hash,
-          Timestamp: block.header.time,
-          txCount: block.num_txs,
-        }))
-
-        setLoadingBlocks(false)
-        setBlocks(formattedBlocks)
-      } catch (error) {
-        setLoadingBlocks(false)
-        console.error('Exhausted all retry attempts.')
-      }
-    }
-
-    fetchBlocks()
   }, [])
 
   useEffect(() => {
@@ -111,7 +84,7 @@ export default function RecentBlocks() {
           <Skeleton w={'100%'} height="220px" borderRadius={12} />
         ) : (
           recentBlocks?.map((item: any, key: number) => (
-            <RecentBlock key={key} bitcoinData={item} blocksData={blocks} />
+            <RecentBlock key={key} bitcoinData={item} />
           ))
         )}
       </VStack>
@@ -141,39 +114,18 @@ export default function RecentBlocks() {
 }
 
 const RecentBlock = ({ bitcoinData, blocksData }: any) => {
-  function getBlockDetails(targetHeight: string) {
-    // Find the block with the matching height
-    const block = blocksData.find((block: any) => block.height === targetHeight)
-
-    if (block) {
-      // Return the desired details
-      return {
-        timestamp: block.Timestamp,
-        appHash: block.appHash,
-        txCount: block.txCount,
-      }
-    } else {
-      // Return null if no block is found
-      return null
-    }
-  }
   const blockRange = Array.from(
     { length: bitcoinData.endBlock - bitcoinData.startBlock + 1 },
-    (_, i) => {
-      const blockId = (parseInt(bitcoinData.startBlock) + i).toString()
-      const matchingBlock = getBlockDetails(blockId)
-
-      return {
-        blockId,
-        address: matchingBlock ? matchingBlock.appHash : '', // Use appHash if block is found, otherwise keep it empty
-        timeStamp: matchingBlock ? matchingBlock.timestamp : '',
-        txsCount: matchingBlock ? matchingBlock.txCount : '',
-      }
-    }
+    (_, i) => ({
+      blockId: (parseInt(bitcoinData.startBlock) + i).toString(),
+      address: '',
+    })
   )
   const firstThreeBlocks = blockRange.slice(0, 3)
   const lastBlock = blockRange.slice(-1)
 
+  console.log(lastBlock, 'last block')
+  console.log(blocksData, 'blocksData')
   return (
     <Box bg={'gray-1100'} borderRadius={12} w={'100%'} marginBottom={4}>
       <Box px={4} py={5} bg="gray-1200" borderTopRadius={12}>
@@ -286,16 +238,16 @@ const RecentBlock = ({ bitcoinData, blocksData }: any) => {
                   color="gray-500"
                   textDecoration="underline"
                 >
-                  {shortenAddress(data.appHash)}
+                  {shortenAddress(data.address)}
                 </Link>
                 <Box w="2px" h="2px" bg="gray-500" borderRadius={99} />
                 <Text fontSize="xs" color="gray-500">
-                  {data?.txCount ?? ''}
+                  {data?.transactions ?? ''}
                 </Text>
                 <Box w="2px" h="2px" bg="gray-500" borderRadius={99} />
-                {/* <Text fontSize="xs" color="gray-400">
-                  {getRelativeTime(data.timestamp)}
-                </Text> */}
+                <Text fontSize="xs" color="gray-400">
+                  {data?.timeAgo || ''}
+                </Text>
               </HStack>
             </HStack>
           ))}
