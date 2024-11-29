@@ -221,14 +221,15 @@ export default function Blocks() {
                           <Td
                             fontSize={{ base: 'xs', md: 'sm' }}
                             border={'none'}
+                            color={'light-theme'}
                           >
                             <Link
                               as={NextLink}
                               href={'/blocks/' + block.height}
-                              style={{ textDecoration: 'none' }}
+                              _hover={{ textDecoration: 'underline' }}
                               _focus={{ boxShadow: 'none' }}
                             >
-                              <Text color={'light-theme'}>{block.height}</Text>
+                              <Text>{block.height}</Text>
                             </Link>
                           </Td>
                           <Td

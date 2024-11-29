@@ -252,7 +252,16 @@ export default function DetailBlock() {
                             Sender
                           </Text>
                         </Td>
-                        <Td color={'text-50'}>{sender}</Td>
+                        <Td color={'text-50'}>
+                          <Link
+                            as={NextLink}
+                            href={'/accounts/' + sender}
+                            _hover={{ textDecoration: 'underline' }}
+                            _focus={{ boxShadow: 'none' }}
+                          >
+                            {sender}
+                          </Link>
+                        </Td>
                       </Tr>
                       <Tr borderBottom="1px solid" borderColor="gray-900">
                         <Td pl={0} width={150} pt={3} pb={4}>
@@ -260,7 +269,17 @@ export default function DetailBlock() {
                             Recipient
                           </Text>
                         </Td>
-                        <Td color={'text-50'}>{recipient}</Td>
+                        <Td color={'text-50'}>
+                          {' '}
+                          <Link
+                            as={NextLink}
+                            href={'/accounts/' + recipient}
+                            _hover={{ textDecoration: 'underline' }}
+                            _focus={{ boxShadow: 'none' }}
+                          >
+                            {recipient}
+                          </Link>
+                        </Td>
                       </Tr>
                       <Tr borderBottom="1px solid" borderColor="gray-900">
                         <Td pl={0} width={150} pt={3} pb={4}>
