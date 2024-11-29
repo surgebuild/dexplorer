@@ -11,8 +11,15 @@ import {
 import NextLink from 'next/link'
 import router from 'next/router'
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useSelector } from 'react-redux'
 
-import { getTotalInscriptions } from '@/rpc/query'
+import {
+  getBlocksFromRange,
+  getLatestBlocks,
+  getTotalInscriptions,
+} from '@/rpc/query'
+import { selectTmClient } from '@/store/connectSlice'
+import { getRelativeTime } from '@/utils'
 import { shortenAddress } from '@/utils/helper'
 import { images } from '@/utils/images'
 
@@ -27,7 +34,6 @@ export default function RecentBlocks() {
       setIsLoading(true)
       const data = await getTotalInscriptions()
       const bitcoinData = data?.bitcoindata
-
       if (bitcoinData) {
         setInscriptionData(bitcoinData)
         setError(null)
@@ -114,6 +120,45 @@ export default function RecentBlocks() {
 }
 
 const RecentBlock = ({ bitcoinData }: any) => {
+  const tmClient = useSelector(selectTmClient)
+  const [blockDetails, setBlockDetails] = useState<any[]>([])
+
+  // Create a memoized cache key based on block range
+  const cacheKey = useMemo(
+    () => `${bitcoinData.startBlock}-${bitcoinData.endBlock}`,
+    [bitcoinData.startBlock, bitcoinData.endBlock]
+  )
+
+  // Use useEffect with the cache key
+  useEffect(() => {
+    const fetchBlockDetails = async () => {
+      if (!tmClient) return
+
+      // Check if we already have data for these blocks
+      if (
+        blockDetails.length > 0 &&
+        blockDetails[0]?.header?.height === parseInt(bitcoinData.startBlock) &&
+        blockDetails[blockDetails.length - 1]?.header?.height ===
+          parseInt(bitcoinData.endBlock)
+      ) {
+        return // Data already exists, no need to fetch
+      }
+
+      try {
+        const details = await getBlocksFromRange(
+          tmClient,
+          parseInt(bitcoinData.startBlock),
+          parseInt(bitcoinData.endBlock)
+        )
+        setBlockDetails([...details.firstBlocks, details.lastBlock])
+      } catch (err) {
+        console.error('Error fetching block details:', err)
+      }
+    }
+
+    fetchBlockDetails()
+  }, [bitcoinData, tmClient, cacheKey, blockDetails])
+
   const blockRange = Array.from(
     { length: bitcoinData.endBlock - bitcoinData.startBlock + 1 },
     (_, i) => ({
@@ -121,8 +166,8 @@ const RecentBlock = ({ bitcoinData }: any) => {
       address: '',
     })
   )
-  const firstThreeBlocks = blockRange.slice(0, 3)
-  const lastBlock = blockRange.slice(-1)
+  const firstThreeBlocks = blockDetails.slice(0, 3)
+  const lastBlock = blockDetails.slice(-1)
   return (
     <Box bg={'gray-1100'} borderRadius={12} w={'100%'} marginBottom={4}>
       <Box px={4} py={5} bg="gray-1200" borderTopRadius={12}>
@@ -144,7 +189,7 @@ const RecentBlock = ({ bitcoinData }: any) => {
               </Link>
             </HStack>
           </HStack>
-          <HStack gap={1}>
+          {/* <HStack gap={1}>
             <Link
               as={NextLink}
               href={'/blocks'}
@@ -153,15 +198,15 @@ const RecentBlock = ({ bitcoinData }: any) => {
               color={'gray-500'}
               textDecoration={'underline'}
             >
-              {/* {shortenAddress(
+              {shortenAddress(
                 '0x00000000000000000001e4add93ab2a51d8d405d60177fd30f791027deefaffd'
-              )} */}
+              )}
             </Link>
             <Dot />
             <Text fontSize={'xs'} color={'gray-400'}>
-              {/* 2hr ago */}
+              2hr ago
             </Text>
-          </HStack>
+          </HStack> */}
         </HStack>
       </Box>
       <Box px={4} py={'14px'}>
@@ -216,34 +261,33 @@ const RecentBlock = ({ bitcoinData }: any) => {
                   <Image width={5} src={images.block.src} alt="block" />
                   <Link
                     as={NextLink}
-                    href={`/blocks/${data.blockId}`}
+                    href={`/blocks/${data.header.height}`}
                     _focus={{ boxShadow: 'none' }}
                     display="block"
                     fontSize="14px"
                     color="primary-200"
                   >
-                    {data.blockId}
+                    {data.header.height}
                   </Link>
                 </HStack>
               </HStack>
               <HStack gap={1}>
-                <Link
-                  as={NextLink}
-                  href={`/address/${data.address}`}
-                  _focus={{ boxShadow: 'none' }}
-                  fontSize="xs"
-                  color="gray-500"
-                  textDecoration="underline"
-                >
-                  {shortenAddress(data.address)}
-                </Link>
-                <Box w="2px" h="2px" bg="gray-500" borderRadius={99} />
                 <Text fontSize="xs" color="gray-500">
-                  {data?.transactions ?? ''}
+                  {shortenAddress(data.id)}
                 </Text>
                 <Box w="2px" h="2px" bg="gray-500" borderRadius={99} />
+                {data?.txs?.length > 0 && (
+                  <>
+                    <Text fontSize="xs" color="gray-500">
+                      {`${data?.txs?.length ?? ''} ${
+                        data?.txs?.length > 1 ? 'txs' : 'txn'
+                      }`}
+                    </Text>
+                    <Box w="2px" h="2px" bg="gray-500" borderRadius={99} />
+                  </>
+                )}
                 <Text fontSize="xs" color="gray-400">
-                  {data?.timeAgo || ''}
+                  {getRelativeTime(data.header.time, true)}
                 </Text>
               </HStack>
             </HStack>
@@ -298,34 +342,31 @@ const RecentBlock = ({ bitcoinData }: any) => {
                   <Image width={5} src={images.block.src} alt="block" />
                   <Link
                     as={NextLink}
-                    href={`/blocks/${data.blockId}`}
+                    href={`/blocks/${data.header.height}`}
                     _focus={{ boxShadow: 'none' }}
                     display="block"
                     fontSize="14px"
                     color="primary-200"
                   >
-                    {data.blockId}
+                    {data.header.height}
                   </Link>
                 </HStack>
               </HStack>
               <HStack gap={1}>
-                <Link
-                  as={NextLink}
-                  href={`/address/${data.address}`}
-                  _focus={{ boxShadow: 'none' }}
-                  fontSize="xs"
-                  color="gray-500"
-                  textDecoration="underline"
-                >
-                  {shortenAddress(data.address)}
-                </Link>
-                <Dot />
                 <Text fontSize="xs" color="gray-500">
-                  {data.transactions}
+                  {shortenAddress(data.id)}
                 </Text>
                 <Dot />
+                {data?.txs?.length > 0 && (
+                  <>
+                    <Text fontSize="xs" color="gray-500">
+                      {`${data?.txs?.length ?? ''} txs`}
+                    </Text>
+                    <Dot />
+                  </>
+                )}
                 <Text fontSize="xs" color="gray-400">
-                  {data.timeAgo}
+                  {getRelativeTime(data.header.time, true)}
                 </Text>
               </HStack>
             </HStack>

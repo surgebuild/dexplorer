@@ -90,7 +90,6 @@ const setupWebSocketListeners = (
 
   if (typeof window !== 'undefined' && window.WebSocket) {
     browserWS.onopen = () => {
-      console.log('Connected to WebSocket')
       subscribeToBlockHeaders(ws)
     }
     browserWS.onmessage = (event: MessageEvent) => handleMessage(event, onData)

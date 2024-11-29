@@ -139,8 +139,8 @@ export default function TransactionList({
                       <Link
                         as={NextLink}
                         href={'/txs/' + transaction.hash}
-                        style={{ textDecoration: 'none' }}
                         _focus={{ boxShadow: 'none' }}
+                        _hover={{ textDecoration: 'underline' }}
                       >
                         # {truncate(transaction.hash, 6)}
                       </Link>
@@ -176,7 +176,7 @@ export default function TransactionList({
                           <Link
                             as={NextLink}
                             href={'/blocks/' + transaction.height}
-                            style={{ textDecoration: 'none' }}
+                            _hover={{ textDecoration: 'underline' }}
                             _focus={{ boxShadow: 'none' }}
                           >
                             {transaction.height}

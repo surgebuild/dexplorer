@@ -180,10 +180,10 @@ export default function DetailBlock() {
                     </Text>
 
                     <HStack gap={2}>
-                      <Text className="body2_regular">{`${truncate(
-                        block?.id ?? '',
-                        12
-                      )}`}</Text>
+                      <Text
+                        className="body2_regular"
+                        color={'text-50'}
+                      >{`${truncate(block?.id ?? '', 12)}`}</Text>
                       <CopyIcon
                         text={block?.id ?? ''}
                         icon={images.copyIcon.src}
@@ -198,7 +198,10 @@ export default function DetailBlock() {
                     >
                       Height
                     </Text>
-                    <Text className="body2_regular">{`# ${block?.header.height}`}</Text>
+                    <Text
+                      className="body2_regular"
+                      color={'text-50'}
+                    >{`# ${block?.header.height}`}</Text>
                   </HStack>
                   <HStack w={'full'}>
                     <Text
@@ -208,7 +211,7 @@ export default function DetailBlock() {
                     >
                       Mined
                     </Text>
-                    <Text className="body2_regular">
+                    <Text className="body2_regular" color={'text-50'}>
                       {block?.header.time
                         ? `${timeFromNow(block?.header.time)} ( ${displayDate(
                             block?.header.time
@@ -224,7 +227,9 @@ export default function DetailBlock() {
                     >
                       Transactions
                     </Text>
-                    <Text className="body2_regular">{block?.txs.length}</Text>
+                    <Text className="body2_regular" color={'text-50'}>
+                      {block?.txs.length}
+                    </Text>
                   </HStack>
                 </VStack>
                 <Img
@@ -264,7 +269,10 @@ export default function DetailBlock() {
                       Block Height
                     </Text>
 
-                    <Text w={'full'}>{`#${block?.header.height}`}</Text>
+                    <Text
+                      w={'full'}
+                      color={'text-50'}
+                    >{`#${block?.header.height}`}</Text>
                   </HStack>
                   <HStack w={'full'}>
                     <Text
