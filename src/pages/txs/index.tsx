@@ -20,7 +20,6 @@ import { useSelector } from 'react-redux'
 
 import { BoxInfo } from '@/components/shared/BoxInfo'
 import GradientBackground from '@/components/shared/GradientBackground'
-import TransactionsChart from '@/components/shared/TpsChart'
 import TransactionList from '@/components/TransactionList'
 import { getTxsByRestApi, getTxTimeStamp } from '@/rpc/query'
 import { selectNewBlock, selectTxEvent } from '@/store/streamSlice'
