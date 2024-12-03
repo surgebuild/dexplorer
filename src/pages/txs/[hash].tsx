@@ -411,7 +411,7 @@ export default function DetailBlock() {
                       _focus={{ boxShadow: 'none' }}
                       w={'full'}
                     >
-                      <Text>{`#${tx?.height}`}</Text>
+                      <Text color={'text-50'}>{`#${tx?.height}`}</Text>
                     </Link>
                   </HStack>
                   <HStack w={'full'} textAlign={'left'}>
