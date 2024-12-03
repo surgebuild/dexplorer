@@ -7,9 +7,9 @@ export const getColor = (status: string | number) => {
     case 'error':
       return 'text-error'
     case 0:
-      return 'text-error'
-    case 1:
       return 'text-success'
+    case 1:
+      return 'text-error'
     default:
       return 'gray.500' // Default color if status is unknown
   }
@@ -86,5 +86,21 @@ export const fetchBitcoinPriceDifference = async () => {
   } catch (error) {
     console.error('Error fetching Bitcoin prices:', error)
     return null
+  }
+}
+
+export function formatCurrency(
+  amount: number,
+  currency: string = 'USD',
+  locale: string = 'en-US'
+): string {
+  try {
+    return new Intl.NumberFormat(locale, {
+      style: 'currency',
+      currency: currency,
+    }).format(amount)
+  } catch (error) {
+    console.error('Error formatting currency:', error)
+    return amount.toString() // Fallback to raw number if formatting fails
   }
 }

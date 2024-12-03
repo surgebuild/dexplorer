@@ -7,6 +7,7 @@ import {
 import { Box, Icon, Img, Text, VStack } from '@chakra-ui/react'
 import React, { useCallback, useEffect, useState } from 'react'
 
+import { formatCurrency } from '@/utils'
 import { images } from '@/utils/images'
 
 export default function BitcoinPriceDifference() {
@@ -95,7 +96,9 @@ export default function BitcoinPriceDifference() {
               fontSize={'sm'}
               fontWeight={'semibold'}
               color={'text-50'}
-            >{`$ ${priceData.currentPrice?.toFixed(2)}`}</Text>
+            >{`${formatCurrency(
+              Number(priceData.currentPrice?.toFixed(2))
+            )}`}</Text>
             <Box display="flex" alignItems="center">
               {renderTriangleIcon(priceData.differencePercentage)}
               <Text
