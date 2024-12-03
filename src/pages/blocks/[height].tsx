@@ -101,8 +101,8 @@ export default function DetailBlock() {
     if (fees && fees.length) {
       return (
         <HStack>
-          <Text>{fees[0].amount}</Text>
-          <Text textColor="cyan.800">{fees[0].denom}</Text>
+          <Text color={'text-50'}>{fees[0].amount}</Text>
+          <Text color="light-theme">{fees[0].denom}</Text>
         </HStack>
       )
     }
@@ -341,7 +341,7 @@ export default function DetailBlock() {
                           <Link
                             as={NextLink}
                             href={'/txs/' + toHex(tx.hash).toUpperCase()}
-                            style={{ textDecoration: 'none' }}
+                            _hover={{ textDecoration: 'underline' }}
                             _focus={{ boxShadow: 'none' }}
                           >
                             <Text className="body2_regular">
@@ -352,13 +352,25 @@ export default function DetailBlock() {
                         <Td border={'none'} className="body2_regular">
                           {renderMessages(tx.data.body?.messages)}
                         </Td>
-                        <Td border={'none'} className="body2_regular">
+                        <Td
+                          border={'none'}
+                          color={'text-50'}
+                          className="body2_regular"
+                        >
                           {getFee(tx.data.authInfo?.fee?.amount)}
                         </Td>
-                        <Td border={'none'} className="body2_regular">
+                        <Td
+                          border={'none'}
+                          className="body2_regular"
+                          color={'text-50'}
+                        >
                           {height}
                         </Td>
-                        <Td border={'none'} className="body2_regular">
+                        <Td
+                          border={'none'}
+                          className="body2_regular"
+                          color={'text-50'}
+                        >
                           {block?.header.time
                             ? timeFromNow(block?.header.time)
                             : ''}
