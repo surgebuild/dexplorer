@@ -193,7 +193,7 @@ export default function TransactionList({
                           <Link
                             as={NextLink}
                             href={'/accounts/' + transaction.fromAddress}
-                            style={{ textDecoration: 'none' }}
+                            _hover={{ textDecoration: 'underline' }}
                             _focus={{ boxShadow: 'none' }}
                           >
                             {truncate(
@@ -219,7 +219,7 @@ export default function TransactionList({
                         <Link
                           as={NextLink}
                           href={'/accounts/' + transaction.toAddress}
-                          style={{ textDecoration: 'none' }}
+                          _hover={{ textDecoration: 'underline' }}
                           _focus={{ boxShadow: 'none' }}
                         >
                           {truncate(transaction.toAddress, showAll ? 10 : 6)}
@@ -357,8 +357,9 @@ const HashComponent = ({
           <Link
             as={NextLink}
             href={'/txs/' + txHash}
-            style={{ textDecoration: 'none', display: 'flex', gap: '2px' }}
+            style={{ display: 'flex', gap: '2px' }}
             _focus={{ boxShadow: 'none' }}
+            _hover={{ textDecoration: 'underline' }}
           >
             <Text
               fontWeight={'medium'}
@@ -384,7 +385,6 @@ const HashComponent = ({
             <Link
               as={NextLink}
               href={'/blocks/' + blockHeight}
-              style={{ textDecoration: 'none' }}
               _focus={{ boxShadow: 'none' }}
               _hover={{ textDecoration: 'underline' }}
             >
