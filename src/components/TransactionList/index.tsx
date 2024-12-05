@@ -160,12 +160,17 @@ export default function TransactionList({
                       />
                     </Td>
                     <Td border={'none'} fontSize={'xs'}>
-                      <Text
+                      {/* <Text
                         fontSize={{ base: 'xs', md: 'sm' }}
                         color={'gray-50'}
                       >
                         {sanitizeString(transaction.txType)}
-                      </Text>
+                      </Text> */}
+                      <Tag variant="subtle" colorScheme="cyan">
+                        <TagLabel fontSize={{ base: 'xs', md: 'sm' }}>
+                          {sanitizeString(transaction.txType)}
+                        </TagLabel>
+                      </Tag>
                     </Td>
                     {/* <Td border={'none'}>
                       {transaction.status == 0 ? (
