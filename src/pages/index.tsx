@@ -27,6 +27,7 @@ import { BoxInfo } from '@/components/shared/BoxInfo'
 import TransactionList from '@/components/TransactionList'
 import {
   getBlockDetails,
+  getLatestTxs,
   getTotalInscriptions,
   getTxsByRestApi,
   getTxTimeStamp,
@@ -34,6 +35,11 @@ import {
 } from '@/rpc/query'
 import { selectTmClient } from '@/store/connectSlice'
 import { selectNewBlock, selectTxEvent } from '@/store/streamSlice'
+import {
+  extractSenderAndRecipient,
+  normalizeToISOString,
+  sanitizeString,
+} from '@/utils'
 import { displayDate } from '@/utils/helper'
 import { images } from '@/utils/images'
 
@@ -70,41 +76,45 @@ export default function Home() {
     const fetchTransactions = async () => {
       const restEndpoint = 'https://rpc.devnet.surge.dev'
       const searchParams = {
+        order: 'timestamp.desc',
+        limit: 20,
+      }
+      const searchParams_restapi = {
         query: `"tx.height>0"`,
-        per_page: '20',
+        per_page: '10',
         page: `${page}`,
         order_by: `"desc"`,
       }
-
       try {
-        setLoadingTx(true)
-        const { txData, txsCount } = await getTxsByRestApi(
+        const { txData } = await getLatestTxs(searchParams)
+        const { txsCount } = await getTxsByRestApi(
           restEndpoint,
-          searchParams
+          searchParams_restapi
         )
+        setLoadingTx(true)
         const formattedTxs = await Promise.all(
           txData.map(async (tx: any) => {
-            const timestamp = await getTxTimeStamp(tx.height) // Resolve each timestamp
             return {
               hash: tx.hash,
               height: tx.height,
-              Timestamp: timestamp, // Use resolved timestamp here
-              status: tx.tx_result.code,
+              Timestamp: normalizeToISOString(tx.timestamp), // Use resolved timestamp here
+              status: 0, //need to update
+              fromAddress: tx.sender,
+              toAddress: tx.receiver,
+              txType: tx.method_name,
             }
           })
         )
-        // setApiTxs(formattedTxs)
         setLoadingTx(false)
         setTxs(formattedTxs)
         setTotalTxs(txsCount)
       } catch (error) {
-        console.error('Error fetching transactions from REST API:', error)
         setLoadingTx(false)
+        console.error('Error fetching transactions from REST API:', error)
       }
     }
-
     fetchTransactions()
-  }, [page])
+  }, [])
 
   useEffect(() => {
     if (txEvent) {
@@ -118,9 +128,10 @@ export default function Home() {
     if (!txEvent.result.data) {
       return
     }
-
+    console.log(txEvent, 'txEvent')
     const data = TxBody.decode(txEvent.result.data)
-
+    console.log(data, 'data from txevent')
+    const result = extractSenderAndRecipient(txEvent)
     const tx = {
       TxEvent: txEvent,
       Timestamp: new Date().toISOString(),
@@ -128,12 +139,16 @@ export default function Home() {
       height: txEvent.height,
       hash: toHex(txEvent.hash).toUpperCase(),
       status: txEvent.result.code,
+      fromAddress: result?.sender ?? '',
+      toAddress: result?.recipient ?? '',
+      txType: sanitizeString(data.memo),
     }
     if (txs.length) {
-      if (txEvent.height >= txs[0]?.height && txEvent.hash != txs[0].hash) {
+      if (txEvent.height >= txs[0].height && txEvent.hash != txs[0].hash) {
         const updatedTx = [tx, ...txs.slice(0, MAX_ROWS - 1)].filter(
           (transaction, index, self) =>
-            index === self.findIndex((tran) => tran.hash === transaction.hash)
+            index ===
+            self.findIndex((transx) => transx.hash === transaction.hash)
         )
         setTxs(updatedTx)
       }
@@ -252,8 +267,8 @@ export default function Home() {
                 showAll={false}
                 txs={txs?.length ? txs : []}
                 totalTxs={totalTxs}
-                page={page}
-                setPage={setPage}
+                // page={page}
+                // setPage={setPage}
                 loading={loadingTx}
               />
             </GridItem>
