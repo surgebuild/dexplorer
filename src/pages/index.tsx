@@ -26,11 +26,9 @@ import RecentBlocks from '@/components/RecentBlocks'
 import { BoxInfo } from '@/components/shared/BoxInfo'
 import TransactionList from '@/components/TransactionList'
 import {
-  getBlockDetails,
   getLatestTxs,
   getTotalInscriptions,
   getTxsByRestApi,
-  getTxTimeStamp,
   getValidators,
 } from '@/rpc/query'
 import { selectTmClient } from '@/store/connectSlice'
