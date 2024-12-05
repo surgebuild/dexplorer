@@ -44,7 +44,7 @@ import {
   trimHash,
 } from '@/utils/helper'
 
-const MAX_ROWS = 30
+const MAX_ROWS = 40
 
 interface Tx {
   TxEvent: TxEvent

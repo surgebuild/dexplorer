@@ -97,24 +97,6 @@ export async function getTotalInscriptions() {
   }
 }
 
-// export async function getTxsByRestApi(restEndpoint: string, searchParams: any) {
-//   try {
-//     const response = await fetch(
-//       `${restEndpoint}/cosmos/tx/v1beta1/txs?${new URLSearchParams(
-//         searchParams
-//       )}`
-//     )
-//     if (!response.ok) {
-//       throw new Error(`HTTP error! status: ${response.status}`)
-//     }
-//     const data = await response.json()
-//     return data.tx_responses
-//   } catch (error) {
-//     console.error('Error fetching transactions:', error)
-//     return []
-//   }
-// }
-
 export async function getTxsByRestApi(restEndpoint: string, searchParams: any) {
   try {
     const response = await fetch(
@@ -137,6 +119,32 @@ export async function getTxsByRestApi(restEndpoint: string, searchParams: any) {
   } catch (error) {
     console.error('Error fetching transactions:', error)
     return { txData: [], txsCount: 0 }
+  }
+}
+export async function getLatestTxs(searchParams: any) {
+  try {
+    const response = await fetch(
+      `https://index.devnet.surge.dev/transactions?${new URLSearchParams(
+        searchParams
+      )}`,
+      {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+        },
+        cache: 'no-cache',
+      }
+    )
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
+    const data = await response.json()
+    return {
+      txData: data,
+    }
+  } catch (error) {
+    console.error('Error fetching transactions:', error)
+    return { txData: [] }
   }
 }
 export async function getBlocksByRestApi(
@@ -167,20 +175,15 @@ export async function getBlocksByRestApi(
   }
 }
 
-export async function getLatestBlocks(maxHeight?: number) {
+export async function getLatestBlocks() {
   try {
-    const response = await fetch(
-      `https://rpc.devnet.surge.dev/blockchain?${
-        maxHeight ? `maxHeight=${maxHeight}` : ''
-      } `,
-      {
-        method: 'GET',
-        headers: {
-          Accept: 'application/json',
-        },
-        cache: 'no-cache',
-      }
-    )
+    const response = await fetch(`https://rpc.devnet.surge.dev/blockchain`, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+      },
+      cache: 'no-cache',
+    })
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`)
     }

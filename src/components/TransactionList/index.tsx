@@ -33,6 +33,7 @@ import {
   capitalizeFirstLetter,
   getColor,
   getRelativeTime,
+  sanitizeString,
   truncate,
 } from '@/utils'
 import { timeFromNow } from '@/utils/helper'
@@ -42,8 +43,8 @@ interface ITransactionList {
   title: string
   showAll: boolean
   txs: any
-  page: number
-  setPage: (page: number) => void
+  // page: number
+  // setPage: (page: number) => void
   totalTxs: number
   loading: boolean
 }
@@ -52,22 +53,22 @@ export default function TransactionList({
   title,
   showAll,
   txs,
-  page = 1,
-  setPage,
+  // page = 1,
+  // setPage,
   totalTxs,
   loading = false,
 }: ITransactionList) {
-  const handlePreviousPage = () => {
-    if (page > 1) {
-      setPage!(page - 1)
-    }
-  }
+  // const handlePreviousPage = () => {
+  //   if (page > 1) {
+  //     setPage!(page - 1)
+  //   }
+  // }
 
-  const handleNextPage = () => {
-    if (page < totalTxs / 20) {
-      setPage!(page + 1)
-    }
-  }
+  // const handleNextPage = () => {
+  //   if (page < totalTxs / 20) {
+  //     setPage!(page + 1)
+  //   }
+  // }
   return (
     <Box
       pt={10}
@@ -95,14 +96,20 @@ export default function TransactionList({
                 Transaction Hash
               </Th>
               <Th borderColor={'gray-900'} color={'text-500'} width={'25%'}>
-                Result
+                Function
               </Th>
-              <Th borderColor={'gray-900'} color={'text-500'} width={'10%'}>
+              <Th borderColor={'gray-900'} color={'text-500'} width={'25%'}>
+                From
+              </Th>
+              <Th borderColor={'gray-900'} color={'text-500'} width={'25%'}>
+                To
+              </Th>
+              {/* <Th borderColor={'gray-900'} color={'text-500'} width={'10%'}>
                 Height
               </Th>
               <Th borderColor={'gray-900'} color={'text-500'} width={'15%'}>
                 Time
-              </Th>
+              </Th> */}
             </Tr>
           </Thead>
           <Tbody>
@@ -112,19 +119,20 @@ export default function TransactionList({
                   transaction: {
                     hash: string
                     TxEvent: { result: { code: number } }
-                    height:
-                      | string
-                      | number
-                      | boolean
-                      | ReactElement<any, string | JSXElementConstructor<any>>
-                      | ReactFragment
-                      | ReactPortal
-                      | null
-                      | undefined
-                    Timestamp: { toISOString: () => string }
+                    height: string
+                    // | boolean
+                    // | ReactElement<any, string | JSXElementConstructor<any>>
+                    // | ReactFragment
+                    // | ReactPortal
+                    // | null
+                    // | undefined
+                    Timestamp: string
                     status: number
                     fees: any
                     feeValue: any
+                    fromAddress: string
+                    toAddress: string
+                    txType: string
                   },
                   ind: Key | null | undefined
                 ) => (
@@ -136,16 +144,30 @@ export default function TransactionList({
                     _last={{ borderBottom: 'none' }}
                   >
                     <Td border={'none'} fontSize={'xs'} color={'text-50'}>
-                      <Link
+                      {/* <Link
                         as={NextLink}
                         href={'/txs/' + transaction.hash}
                         _focus={{ boxShadow: 'none' }}
                         _hover={{ textDecoration: 'underline' }}
                       >
                         # {truncate(transaction.hash, 6)}
-                      </Link>
+                      </Link>  */}
+                      <HashComponent
+                        txHash={transaction.hash}
+                        txStatus={transaction.status}
+                        blockHeight={transaction.height}
+                        time={transaction.Timestamp}
+                      />
                     </Td>
-                    <Td border={'none'}>
+                    <Td border={'none'} fontSize={'xs'}>
+                      <Text
+                        fontSize={{ base: 'xs', md: 'sm' }}
+                        color={'gray-50'}
+                      >
+                        {sanitizeString(transaction.txType)}
+                      </Text>
+                    </Td>
+                    {/* <Td border={'none'}>
                       {transaction.status == 0 ? (
                         <Tag variant="subtle" colorScheme="green">
                           <TagLeftIcon as={FiCheck} />
@@ -161,8 +183,50 @@ export default function TransactionList({
                           </TagLabel>
                         </Tag>
                       )}
+                    </Td> */}
+                    <Td border={'none'}>
+                      <HStack justifyContent={'space-between'}>
+                        <Text
+                          fontSize={{ base: 'xs', md: 'sm' }}
+                          color={'text-link'}
+                        >
+                          <Link
+                            as={NextLink}
+                            href={'/accounts/' + transaction.fromAddress}
+                            style={{ textDecoration: 'none' }}
+                            _focus={{ boxShadow: 'none' }}
+                          >
+                            {truncate(
+                              transaction.fromAddress,
+                              showAll ? 10 : 6
+                            )}
+                          </Link>
+                        </Text>
+                        <Img
+                          src={images.rightArrow.src}
+                          width={6}
+                          height={6}
+                          alt="arrow"
+                          mr={{ base: 0, md: 6 }}
+                        />
+                      </HStack>
                     </Td>
-                    <Td border={'none'} pr={1}>
+                    <Td border={'none'}>
+                      <Text
+                        fontSize={{ base: 'xs', md: 'sm' }}
+                        color={'text-link'}
+                      >
+                        <Link
+                          as={NextLink}
+                          href={'/accounts/' + transaction.toAddress}
+                          style={{ textDecoration: 'none' }}
+                          _focus={{ boxShadow: 'none' }}
+                        >
+                          {truncate(transaction.toAddress, showAll ? 10 : 6)}
+                        </Link>
+                      </Text>
+                    </Td>
+                    {/* <Td border={'none'} pr={1}>
                       <Box
                         display={'flex'}
                         gap={4}
@@ -183,15 +247,15 @@ export default function TransactionList({
                           </Link>
                         </Text>
                       </Box>
-                    </Td>
-                    <Td border={'none'}>
+                    </Td> */}
+                    {/* <Td border={'none'}>
                       <Text
                         fontSize={{ base: 'xs', md: 'sm' }}
                         color={'text-link'}
                       >
                         {getRelativeTime(String(transaction.Timestamp))}
                       </Text>
-                    </Td>
+                    </Td> */}
                   </Tr>
                 )
               )
@@ -233,7 +297,7 @@ export default function TransactionList({
           </Button>
         </Box>
       )}
-      {showAll && txs.length > 18 && (
+      {/* {showAll && txs.length > 18 && (
         <Box display={'flex'} justifyContent={{ md: 'center' }}>
           <HStack
             justifyContent="space-between"
@@ -268,15 +332,15 @@ export default function TransactionList({
             </Button>
           </HStack>
         </Box>
-      )}
+      )} */}
     </Box>
   )
 }
 
 interface IHashComponent {
   txHash: string
-  blockHeight: number
-  txStatus: string
+  blockHeight: string
+  txStatus: number
   time: string
 }
 
@@ -290,27 +354,42 @@ const HashComponent = ({
     <Box>
       <VStack gap={'6px'} alignItems={'start'}>
         <HStack gap={'2px'}>
-          <Text
-            fontWeight={'medium'}
-            fontSize={'xs'}
-            lineHeight={'18px'}
-            color={'text-200'}
+          <Link
+            as={NextLink}
+            href={'/txs/' + txHash}
+            style={{ textDecoration: 'none', display: 'flex', gap: '2px' }}
+            _focus={{ boxShadow: 'none' }}
           >
-            #
-          </Text>
-          <Text
-            fontWeight={'medium'}
-            fontSize={'xs'}
-            lineHeight={'18px'}
-            color={'text-50'}
-          >
-            {truncate(txHash, 6)}
-          </Text>
+            <Text
+              fontWeight={'medium'}
+              fontSize={'xs'}
+              lineHeight={'18px'}
+              color={'text-200'}
+            >
+              #
+            </Text>
+            <Text
+              fontWeight={'medium'}
+              fontSize={'xs'}
+              lineHeight={'18px'}
+              color={'text-50'}
+            >
+              {truncate(txHash, 8)}
+            </Text>
+          </Link>
         </HStack>
         <HStack gap={'2px'}>
           <Img src={images.blockLogo.src} width={'12px'} height={'12px'} />
           <Text fontSize={'xs'} lineHeight={'15px'} color={'primary-200'}>
-            {blockHeight}
+            <Link
+              as={NextLink}
+              href={'/blocks/' + blockHeight}
+              style={{ textDecoration: 'none' }}
+              _focus={{ boxShadow: 'none' }}
+              _hover={{ textDecoration: 'underline' }}
+            >
+              {blockHeight}
+            </Link>
           </Text>
           <Dot />
           <Text
@@ -318,10 +397,10 @@ const HashComponent = ({
             fontSize={'xs'}
             fontWeight={'medium'}
           >
-            {capitalizeFirstLetter(txStatus)}
+            {capitalizeFirstLetter(txStatus == 0 ? 'success' : 'error')}
           </Text>
           <Dot />
-          <Text fontSize={'xs'} color={'text-gray-500'} lineHeight={'15px'}>
+          <Text fontSize={'xs'} color={'gray-50'} lineHeight={'15px'}>
             {getRelativeTime(time)}
           </Text>
         </HStack>

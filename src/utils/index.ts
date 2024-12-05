@@ -6,10 +6,10 @@ export const getColor = (status: string | number) => {
       return 'text-danger'
     case 'error':
       return 'text-error'
-    case 0:
-      return 'text-success'
     case 1:
       return 'text-error'
+    case 0:
+      return 'text-success'
     default:
       return 'gray.500' // Default color if status is unknown
   }
@@ -103,4 +103,76 @@ export function formatCurrency(
     console.error('Error formatting currency:', error)
     return amount.toString() // Fallback to raw number if formatting fails
   }
+}
+export function extractSenderAndRecipient(
+  transaction: any
+): { sender: string; recipient: string } | null {
+  if (!transaction.result || !transaction.result.events) {
+    console.warn('Transaction does not have a valid result or events array.')
+    return null
+  }
+
+  const events = transaction.result.events
+
+  let sender = ''
+  let recipient = ''
+
+  // Look for the transfer event type
+  for (const event of events) {
+    if (event.type === 'transfer') {
+      for (const attribute of event.attributes) {
+        if (attribute.key === 'sender') {
+          sender = attribute.value
+        } else if (attribute.key === 'recipient') {
+          recipient = attribute.value
+        }
+      }
+    }
+
+    // If sender and recipient are found, no need to continue
+    if (sender && recipient) {
+      break
+    }
+  }
+
+  if (!sender || !recipient) {
+    console.warn('Sender or recipient not found in transaction events.')
+    return null
+  }
+
+  return { sender, recipient }
+}
+
+export function sanitizeString(input: string): string {
+  // Remove newline characters (\n) and escape sequences like \uXXXX
+  let sanitized = input.replace(/\\n/g, '').replace(/\\u[0-9a-fA-F]{4}/g, '')
+
+  // Remove any non-printable or non-ASCII characters
+  sanitized = sanitized.replace(/[^\x20-\x7E]/g, '')
+
+  // Remove the '&' character
+  sanitized = sanitized.replace(/&/g, '')
+
+  // Remove 'Response' at the end of the string
+  sanitized = sanitized.replace(/Response$/, '')
+
+  // Trim whitespace from the start and end
+  return sanitized.trim()
+}
+
+export function normalizeToISOString(timestamp: string) {
+  // Check if the input contains fractional seconds
+  const [datePart, timePart] = timestamp.split('.')
+
+  if (!timePart) {
+    // If no fractional seconds, directly convert to ISO
+    return new Date(timestamp).toISOString()
+  }
+
+  // Limit fractional seconds to 3 decimal places (milliseconds)
+  const milliseconds = timePart.slice(0, 3)
+  const normalizedTimestamp = `${datePart}.${milliseconds}Z`
+
+  // Convert to ISO string
+  return new Date(normalizedTimestamp).toISOString()
 }
