@@ -201,27 +201,28 @@ export default function DetailAccount() {
             borderRadius={'xl'}
             p={4}
           >
-            <Heading size={'md'} mb={4}>
+            <Heading size={'md'} mb={4} color={'text-50'}>
               Profile
             </Heading>
-            <Divider borderColor={'gray'} mb={4} />
+            <Divider borderColor={'gray-900'} mb={4} />
             <TableContainer>
               <Table variant="unstyled" size={'sm'}>
                 <Tbody>
                   <Tr>
-                    <Td pl={0} width={150}>
+                    <Td pl={0} width={150} color={'text-500'}>
                       <b>Address</b>
                     </Td>
                     <Td>{address}</Td>
                   </Tr>
                   <Tr>
-                    <Td pl={0} width={150}>
+                    <Td pl={0} width={150} color={'text-500'}>
                       <b>Pub Key</b>
                     </Td>
                     <Td>
                       <Tabs>
                         <TabList _active={{ color: 'primary-700' }}>
                           <Tab
+                            color={'text-500'}
                             _selected={{
                               color: 'primary-700',
                               borderBottom: '2px solid #AD3014',
@@ -230,6 +231,7 @@ export default function DetailAccount() {
                             @Type
                           </Tab>
                           <Tab
+                            color={'text-500'}
                             _selected={{
                               color: 'primary-700',
                               borderBottom: '2px solid #AD3014',
@@ -239,10 +241,10 @@ export default function DetailAccount() {
                           </Tab>
                         </TabList>
                         <TabPanels>
-                          <TabPanel>
+                          <TabPanel color={'text-50'}>
                             <p>{account?.pubkey?.type}</p>
                           </TabPanel>
-                          <TabPanel>
+                          <TabPanel color={'text-50'}>
                             <p>{account?.pubkey?.value}</p>
                           </TabPanel>
                         </TabPanels>
@@ -250,16 +252,16 @@ export default function DetailAccount() {
                     </Td>
                   </Tr>
                   <Tr>
-                    <Td pl={0} width={150}>
+                    <Td pl={0} width={150} color={'text-500'}>
                       <b>Account Number</b>
                     </Td>
-                    <Td>{account?.accountNumber}</Td>
+                    <Td color={'text-50'}>{account?.accountNumber}</Td>
                   </Tr>
                   <Tr>
-                    <Td pl={0} width={150}>
+                    <Td pl={0} width={150} color={'text-500'}>
                       <b>Sequence</b>
                     </Td>
-                    <Td>{account?.sequence}</Td>
+                    <Td color={'text-50'}>{account?.sequence}</Td>
                   </Tr>
                 </Tbody>
               </Table>
@@ -275,13 +277,14 @@ export default function DetailAccount() {
             mt={8}
             p={4}
           >
-            <Heading size={'md'} mb={4}>
+            <Heading size={'md'} mb={4} color={'text-50'}>
               Balances
             </Heading>
             <Heading size={'sm'} mb={4}></Heading>
-            <Tabs size="md">
-              <TabList>
+            <Tabs size="md" borderColor={'gray-900'}>
+              <TabList borderColor={'gray-900'}>
                 <Tab
+                  color={'text-500'}
                   _selected={{
                     color: 'primary-700',
                     borderBottom: '2px solid #AD3014',
@@ -290,6 +293,7 @@ export default function DetailAccount() {
                   Available
                 </Tab>
                 <Tab
+                  color={'text-500'}
                   _selected={{
                     color: 'primary-700',
                     borderBottom: '2px solid #AD3014',
@@ -302,15 +306,15 @@ export default function DetailAccount() {
                 <TabPanel>
                   <TableContainer>
                     <Table variant="simple">
-                      <Thead>
-                        <Tr>
+                      <Thead borderColor={'gray-900'}>
+                        <Tr color={'text-500'}>
                           <Th>Denom</Th>
                           <Th>Amount</Th>
                         </Tr>
                       </Thead>
                       <Tbody>
                         {allBalances.map((item, index) => (
-                          <Tr key={index}>
+                          <Tr key={index} color={'text-50'}>
                             <Td>{item.denom}</Td>
                             <Td>{item.amount}</Td>
                           </Tr>
@@ -322,14 +326,14 @@ export default function DetailAccount() {
                 <TabPanel>
                   <TableContainer>
                     <Table variant="simple">
-                      <Thead>
-                        <Tr>
+                      <Thead borderColor={'gray-900'}>
+                        <Tr color={'text-500'}>
                           <Th>Denom</Th>
                           <Th>Amount</Th>
                         </Tr>
                       </Thead>
                       <Tbody>
-                        <Tr>
+                        <Tr color={'text-50'}>
                           <Td>{balanceStaked?.denom}</Td>
                           <Td>{balanceStaked?.amount}</Td>
                         </Tr>
@@ -353,11 +357,11 @@ export default function DetailAccount() {
             <Heading size={'md'} mb={4}>
               Transactions
             </Heading>
-            <Divider borderColor={'gray'} mb={4} />
+            <Divider borderColor={'gray-900'} mb={4} />
             <TableContainer>
               <Table variant="simple">
                 <Thead>
-                  <Tr>
+                  <Tr color={'text-500'}>
                     <Th>Tx Hash</Th>
                     <Th>Memo</Th>
                     <Th>Height</Th>
@@ -371,42 +375,38 @@ export default function DetailAccount() {
                         <Link
                           as={NextLink}
                           href={'/txs/' + toHex(tx.hash).toUpperCase()}
-                          style={{ textDecoration: 'none' }}
+                          _hover={{ textDecoration: 'underline' }}
+                          color={'light-theme'}
                           _focus={{ boxShadow: 'none' }}
                         >
                           <Text
                             fontSize={{ base: 'xs', md: 'sm' }}
-                            color={useColorModeValue(
-                              'light-theme',
-                              'dark-theme'
-                            )}
+                            color={'light-theme'}
                           >
                             {trimHash(tx.hash)}
                           </Text>
                         </Link>
                       </Td>
-                      <Td fontSize={{ base: 'xs', md: 'sm' }}>
+                      <Td fontSize={{ base: 'xs', md: 'sm' }} color={'text-50'}>
                         {parseMemo(tx.data.memo)}
                       </Td>
                       <Td>
                         <Link
                           as={NextLink}
                           href={'/blocks/' + tx.height}
-                          style={{ textDecoration: 'none' }}
+                          _hover={{ textDecoration: 'underline' }}
                           _focus={{ boxShadow: 'none' }}
+                          color={'light-theme'}
                         >
                           <Text
                             fontSize={{ base: 'xs', md: 'sm' }}
-                            color={useColorModeValue(
-                              'light-theme',
-                              'dark-theme'
-                            )}
+                            color={'light-theme'}
                           >
                             {tx.height}
                           </Text>
                         </Link>
                       </Td>
-                      <Td fontSize={{ base: 'xs', md: 'sm' }}>
+                      <Td fontSize={{ base: 'xs', md: 'sm' }} color={'text-50'}>
                         {renderMessages(tx.data.messages)}
                       </Td>
                     </Tr>
