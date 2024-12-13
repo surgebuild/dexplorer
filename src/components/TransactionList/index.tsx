@@ -272,6 +272,7 @@ export default function TransactionList({
                   colSpan={4}
                   textAlign="center"
                   pt={8}
+                  fontSize={{ base: 'xs', md: 'base' }}
                 >
                   Loading Transactions...
                 </Td>

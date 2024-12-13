@@ -215,8 +215,9 @@ export default function Blocks() {
                       {blocks.map((block) => (
                         <Tr
                           key={block.height}
-                          border={'1px'}
+                          borderBottom={'1px'}
                           borderColor={'gray-900'}
+                          _last={{ border: 'none' }}
                         >
                           <Td
                             fontSize={{ base: 'xs', md: 'sm' }}
@@ -229,7 +230,7 @@ export default function Blocks() {
                               _hover={{ textDecoration: 'underline' }}
                               _focus={{ boxShadow: 'none' }}
                             >
-                              <Text>{block.height}</Text>
+                              <Text color={'light-theme'}>{block.height}</Text>
                             </Link>
                           </Td>
                           <Td
