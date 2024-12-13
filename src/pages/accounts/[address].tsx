@@ -370,7 +370,12 @@ export default function DetailAccount() {
                 </Thead>
                 <Tbody>
                   {txs.map((tx) => (
-                    <Tr key={toHex(tx.hash)}>
+                    <Tr
+                      key={toHex(tx.hash)}
+                      borderBottom={'1px'}
+                      borderColor={'gray-900'}
+                      _last={{ borderBottom: 'none' }}
+                    >
                       <Td>
                         <Link
                           as={NextLink}
