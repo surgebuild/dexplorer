@@ -109,7 +109,7 @@ const setupWebSocketListeners = (
 }
 
 export const startBlockMonitor = (
-  wsUrl: string = 'wss://rpc.devnet.surge.dev/websocket',
+  wsUrl: string = 'wss://alphatestnet.surge.dev/websocket',
   onData: (header: BlockHeader) => void
 ): (() => void) => {
   const ws = createWebSocketConnection(wsUrl)
