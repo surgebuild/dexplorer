@@ -15,48 +15,39 @@ a {
   }
 }
 
-/* ::-webkit-scrollbar {
-  width: 6px;
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: #000000;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(45deg, #000000, #ff4500, #ff6347);
-  transition: all 0.1s ease-in-out;
-  border-radius: 6px;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 0, 0, 0.6),
+    rgba(244, 67, 28, 0.4),
+    rgba(255, 99, 71, 0.3)
+  );
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  transition: all 0.1s ease-in-out;
-  background: linear-gradient(45deg, #ff6347, #ff4500, #000000);
+  background: linear-gradient(
+    45deg,
+    rgba(255, 99, 71, 0.5),
+    rgba(244, 67, 28, 0.6),
+    rgba(0, 0, 0, 0.4)
+  );
 }
 
-scrollbar-color: #000000 #f1f1f1;
-scrollbar-width: thin;
-
-body {
-  -ms-overflow-style: scrollbar;
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(244, 67, 28, 0.4) #000000;
 }
-
-body::-ms-scrollbar {
-  width: 6px;
-}
-
-body::-ms-scrollbar-track {
-  background: #f1f1f1;
-}
-
-body::-ms-scrollbar-thumb {
-  background: linear-gradient(45deg, #000000, #ff4500, #ff6347);
-  border-radius: 6px;
-}
-
-body::-ms-scrollbar-thumb:hover {
-  background: linear-gradient(45deg, #ff6347, #ff4500, #000000);
-} */
 
 .primary_gradient {
   background: linear-gradient(90deg, #f4431c 0%, #371108 100%);

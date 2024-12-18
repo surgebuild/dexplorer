@@ -100,17 +100,36 @@ export default function DetailBlock() {
     if (fees && fees.length) {
       return (
         <HStack>
-          <Text>{fees[0].amount}</Text>
-          <Text textColor="primary-700">{fees[0].denom}</Text>
+          <Text color="text-50">{fees[0].amount}</Text>
+          <Text color="light-theme">{fees[0].denom}</Text>
         </HStack>
       )
     }
     return ''
   }
 
-  const showMsgData = (msgData: any) => {
+  const splitAmount = (amountStr: string) => {
+    // Find the position where the numeric part ends
+    const numericEndIndex = amountStr.search(/[a-zA-Z]/)
+    if (numericEndIndex === -1) return <Text color="text-50">{amountStr}</Text>
+
+    const amount = amountStr.slice(0, numericEndIndex)
+    const denom = amountStr.slice(numericEndIndex)
+
+    return (
+      <HStack spacing={1}>
+        <Text color="text-50">{amount}</Text>
+        <Text color="light-theme">{denom}</Text>
+      </HStack>
+    )
+  }
+
+  const showMsgData = (msgData: any, key?: string) => {
     if (msgData) {
       if (Array.isArray(msgData)) {
+        if (key === 'amount') {
+          return getFee(msgData)
+        }
         return JSON.stringify(msgData)
       }
 
@@ -120,10 +139,11 @@ export default function DetailBlock() {
             <Link
               as={NextLink}
               href={'/accounts/' + msgData}
-              style={{ textDecoration: 'none' }}
+              style={{ textDecoration: 'none', display: 'flex', gap: 10 }}
               _focus={{ boxShadow: 'none' }}
             >
-              <Text color={'cyan.400'}>{msgData}</Text>
+              <Text color={'light-theme'}>{truncate(msgData, 10)}</Text>
+              <CopyIcon text={msgData} icon={images.copyIcon.src} />
             </Link>
           )
         } else {
@@ -194,6 +214,7 @@ export default function DetailBlock() {
     (event) => event.type === 'transfer'
   )
   const { amount, sender, recipient } = getTransferDetails(txTransferEvent)
+  console.log(msgs, 'mesage transfer')
 
   return (
     <>
@@ -217,7 +238,7 @@ export default function DetailBlock() {
       <Box>
         <GradientBackground title="Transaction Details">
           <Grid templateColumns="repeat(12, 1fr)" gap={5} pb={10}>
-            <GridItem colSpan={{ base: 12, md: 8 }}>
+            <GridItem colSpan={{ base: 12, md: 7 }}>
               <Box
                 mt={8}
                 bg={'#2A313A66'}
@@ -239,12 +260,10 @@ export default function DetailBlock() {
                       <Tr borderBottom="1px solid" borderColor="gray-900">
                         <Td pl={0} width={150} pt={3} pb={4} pr={16}>
                           <Text className="body2_regular" color={'text-500'}>
-                            Amount
+                            Fee Amount
                           </Text>
                         </Td>
-                        <Td color={'text-50'}>
-                          {getFee(txData?.authInfo?.fee?.amount)}
-                        </Td>
+                        <Td color={'text-50'}>{splitAmount(amount)}</Td>
                       </Tr>
                       <Tr borderBottom="1px solid" borderColor="gray-900">
                         <Td pl={0} width={150} pt={3} pb={4}>
@@ -316,7 +335,7 @@ export default function DetailBlock() {
                           </Text>
                         </Td>
                         <Td pt={3} pb={4} color={'text-50'}>
-                          {tx?.hash}
+                          {truncate(tx?.hash ?? '', 15)}
                         </Td>
                       </Tr>
                       <Tr borderBottom="1px solid" borderColor="gray-900">
@@ -377,7 +396,7 @@ export default function DetailBlock() {
                 </TableContainer>
               </Box>
             </GridItem>
-            <GridItem colSpan={{ base: 12, md: 4 }}>
+            <GridItem colSpan={{ base: 12, md: 5 }}>
               <Box
                 mt={8}
                 // bg={useColorModeValue('light-container', 'dark-container')}
@@ -433,6 +452,64 @@ export default function DetailBlock() {
                     </HStack>
                   </HStack>
                 </VStack>
+              </Box>
+              <Box
+                mt={8}
+                bg={'#2A313A66'}
+                shadow={'base'}
+                borderRadius={'xl'}
+                p={4}
+              >
+                <Text
+                  size={'md'}
+                  mb={4}
+                  className="body2_medium"
+                  color={'text-500'}
+                >
+                  MESSAGES
+                </Text>
+
+                {msgs.map((msg, index) => (
+                  <Card variant={'outline'} key={index} mb={8}>
+                    <CardHeader bg={'dark-bg'} borderTopRadius={'8px'}>
+                      <Text
+                        size={'xs'}
+                        color={'text-50'}
+                        className="body2_medium"
+                      >
+                        {getTypeMsg(msg.typeUrl)}
+                      </Text>
+                    </CardHeader>
+                    <Divider />
+                    <CardBody bg={'dark-bg'} borderBottomRadius={'8px'}>
+                      <TableContainer>
+                        <Table variant="unstyled" size={'sm'}>
+                          <Tbody>
+                            <Tr>
+                              <Td pl={0} width={150} color={'text-500'}>
+                                <b>typeUrl</b>
+                              </Td>
+                              <Td>{msg.typeUrl}</Td>
+                            </Tr>
+                            {Object.keys(msg.data ?? {}).map((key) => (
+                              <Tr key={key}>
+                                <Td pl={0} width={150} color={'text-500'}>
+                                  <b>{key}</b>
+                                </Td>
+                                <Td>
+                                  {showMsgData(
+                                    msg.data ? msg.data[key as keyof {}] : '',
+                                    key
+                                  )}
+                                </Td>
+                              </Tr>
+                            ))}
+                          </Tbody>
+                        </Table>
+                      </TableContainer>
+                    </CardBody>
+                  </Card>
+                ))}
               </Box>
             </GridItem>
           </Grid>
