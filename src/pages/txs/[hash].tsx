@@ -98,10 +98,19 @@ export default function DetailBlock() {
 
   const getFee = (fees: Coin[] | undefined) => {
     if (fees && fees.length) {
+      let amount = fees[0].amount
+      let denom = fees[0].denom
+
+      // Check if amount is greater than 10000
+      if (Number(amount) >= 10000) {
+        amount = String(Math.round(Number(amount) * 10e-7 * 1000) / 1000)
+        denom = 'SURG'
+      }
+
       return (
         <HStack>
-          <Text color="text-50">{fees[0].amount}</Text>
-          <Text color="light-theme">{fees[0].denom}</Text>
+          <Text color="text-50">{amount}</Text>
+          <Text color="light-theme">{denom}</Text>
         </HStack>
       )
     }
