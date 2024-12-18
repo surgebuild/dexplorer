@@ -74,7 +74,7 @@ export default function Blocks() {
 
   useEffect(() => {
     const fetchBlocks = async () => {
-      const restEndpoint = 'https://rpc.devnet.surge.dev'
+      const restEndpoint = 'https://alphatestnet.surge.dev'
       const searchParams = {
         query: `"block.height>0"`,
         per_page: '20',

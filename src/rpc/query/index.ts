@@ -82,7 +82,7 @@ export async function getTxsBySender(
 export async function getTotalInscriptions() {
   try {
     const response = await fetch(
-      'https://api.devnet.surge.dev/surge/zk/bitcoindata?pagination.reverse=true'
+      'https://api-alphatestnet.surge.dev/surge/zk/bitcoindata?pagination.reverse=true'
     )
 
     if (!response.ok) {
@@ -177,7 +177,7 @@ export async function getBlocksByRestApi(
 
 export async function getLatestBlocks() {
   try {
-    const response = await fetch(`https://rpc.devnet.surge.dev/blockchain`, {
+    const response = await fetch(`https://alphatestnet.surge.dev/blockchain`, {
       method: 'GET',
       headers: {
         Accept: 'application/json',
@@ -223,7 +223,7 @@ export async function getBlockDetails(restEndpoint: string, height: string) {
 export const getTxTimeStamp = async (blockHeight: string) => {
   try {
     const blockDetail = await getBlockDetails(
-      'https://rpc.devnet.surge.dev',
+      'https://alphatestnet.surge.dev',
       blockHeight
     )
 

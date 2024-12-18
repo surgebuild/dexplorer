@@ -29,7 +29,8 @@ import { removeTrailingSlash } from '@/utils/helper'
 const chainList = [
   {
     name: 'Surge',
-    rpc: 'https://rpc.devnet.surge.dev',
+    // rpc: 'https://alphatestnet.surge.dev',
+    rpc: process.env.NEXT_PUBLIC_RPC_ADDRESS,
   },
 ]
 
@@ -231,7 +232,7 @@ export default function Connect() {
                   </Text>
                 </Box>
                 <IconButton
-                  onClick={() => selectChain(chain.rpc)}
+                  onClick={() => selectChain(chain.rpc ?? '')}
                   backgroundColor={useColorModeValue(
                     'light-theme',
                     'dark-theme'

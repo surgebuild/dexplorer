@@ -96,7 +96,8 @@ export default function Transactions() {
 
   useEffect(() => {
     const fetchTransactions = async () => {
-      const restEndpoint = 'https://rpc.devnet.surge.dev'
+      const restEndpoint =
+        process.env.NEXT_PUBLIC_RPC_ADDRESS || 'https://alphatestnet.surge.dev'
       const searchParams = {
         order: 'timestamp.desc',
         limit: 100,
