@@ -99,10 +99,15 @@ export default function DetailBlock() {
 
   const getFee = (fees: Coin[] | undefined) => {
     if (fees && fees.length) {
+      let amount = fees[0].amount
+      let denom = 'SURG'
+
       return (
         <HStack>
-          <Text color={'text-50'}>{fees[0].amount}</Text>
-          <Text color="light-theme">{fees[0].denom}</Text>
+          <Text color="text-50">
+            {String(Math.round(Number(amount) * 10e-7 * 100000) / 100000)}
+          </Text>
+          <Text color="light-theme">{denom}</Text>
         </HStack>
       )
     }

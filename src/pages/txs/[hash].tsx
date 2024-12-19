@@ -99,17 +99,19 @@ export default function DetailBlock() {
   const getFee = (fees: Coin[] | undefined) => {
     if (fees && fees.length) {
       let amount = fees[0].amount
-      let denom = fees[0].denom
+      let denom = 'SURG'
 
       // Check if amount is greater than 10000
-      if (Number(amount) >= 10000) {
-        amount = String(Math.round(Number(amount) * 10e-7 * 1000) / 1000)
-        denom = 'SURG'
-      }
+      // if (Number(amount) >= 10000) {
+      //   amount = String(Math.round(Number(amount) * 10e-7 * 1000) / 1000)
+      //   denom = 'SURG'
+      // }
 
       return (
         <HStack>
-          <Text color="text-50">{amount}</Text>
+          <Text color="text-50">
+            {String(Math.round(Number(amount) * 10e-7 * 1000) / 1000)}
+          </Text>
           <Text color="light-theme">{denom}</Text>
         </HStack>
       )
@@ -127,8 +129,10 @@ export default function DetailBlock() {
 
     return (
       <HStack spacing={1}>
-        <Text color="text-50">{amount}</Text>
-        <Text color="light-theme">{denom}</Text>
+        <Text color="text-50">
+          {String(Math.round(Number(amount) * 10e-7 * 100000) / 100000)}
+        </Text>
+        <Text color="light-theme">{'SURG'}</Text>
       </HStack>
     )
   }
@@ -223,7 +227,6 @@ export default function DetailBlock() {
     (event) => event.type === 'transfer'
   )
   const { amount, sender, recipient } = getTransferDetails(txTransferEvent)
-  console.log(msgs, 'mesage transfer')
 
   return (
     <>
@@ -266,14 +269,6 @@ export default function DetailBlock() {
                 <TableContainer>
                   <Table variant="unstyled" size={'sm'}>
                     <Tbody>
-                      <Tr borderBottom="1px solid" borderColor="gray-900">
-                        <Td pl={0} width={150} pt={3} pb={4} pr={16}>
-                          <Text className="body2_regular" color={'text-500'}>
-                            Fee Amount
-                          </Text>
-                        </Td>
-                        <Td color={'text-50'}>{splitAmount(amount)}</Td>
-                      </Tr>
                       <Tr borderBottom="1px solid" borderColor="gray-900">
                         <Td pl={0} width={150} pt={3} pb={4}>
                           <Text className="body2_regular" color={'text-500'}>
@@ -387,6 +382,14 @@ export default function DetailBlock() {
                         <Td pt={3} pb={4} color={'text-50'}>
                           {`(${tx?.gasUsed} / ${tx?.gasWanted})`}
                         </Td>
+                      </Tr>
+                      <Tr borderBottom="1px solid" borderColor="gray-900">
+                        <Td pl={0} width={150} pt={3} pb={4} pr={16}>
+                          <Text className="body2_regular" color={'text-500'}>
+                            Fee Amount
+                          </Text>
+                        </Td>
+                        <Td color={'text-50'}>{splitAmount(amount)}</Td>
                       </Tr>
                       <Tr>
                         {' '}
