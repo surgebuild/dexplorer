@@ -10,11 +10,11 @@ import {
   Icon,
   IconButton,
   Image,
-  Link,
+  Link as NextLink,
   useColorModeValue,
   useDisclosure,
 } from '@chakra-ui/react'
-import NextLink from 'next/link'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { ReactNode, useEffect, useState } from 'react'
 import { IconType } from 'react-icons'
@@ -121,7 +121,15 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
             mx="8"
             justifyContent="space-between"
           >
-            <Image w={122} pt={5} src={images.logo.src} alt="logo" />
+            <Link href="/">
+              <Image
+                w={122}
+                pt={5}
+                src={images.logo.src}
+                alt="logo"
+                style={{ cursor: 'pointer' }}
+              />
+            </Link>
 
             <CloseButton
               display={{ base: 'flex', md: 'none' }}
@@ -191,8 +199,7 @@ const NavItem = ({
   }
 
   return (
-    <Link
-      as={NextLink}
+    <NextLink
       href={route}
       style={{ textDecoration: 'none' }}
       _focus={{ boxShadow: 'none' }}
@@ -229,7 +236,7 @@ const NavItem = ({
         )}
         {children}
       </Flex>
-    </Link>
+    </NextLink>
   )
 }
 
@@ -255,8 +262,7 @@ const RefLinkItem = ({
   }
 
   return (
-    <Link
-      as={NextLink}
+    <NextLink
       href={route}
       style={{ textDecoration: 'none' }}
       _focus={{ boxShadow: 'none' }}
@@ -275,7 +281,7 @@ const RefLinkItem = ({
           as={icon}
         />
       )}
-    </Link>
+    </NextLink>
   )
 }
 
