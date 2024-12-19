@@ -128,9 +128,7 @@ export default function Home() {
     if (!txEvent.result.data) {
       return
     }
-    console.log(txEvent, 'txEvent')
     const data = TxBody.decode(txEvent.result.data)
-    console.log(data, 'data from txevent')
     const result = extractSenderAndRecipient(txEvent)
     const tx = {
       TxEvent: txEvent,

@@ -9,8 +9,10 @@ import { useCopyToClipboard } from '@/utils/hooks/useCopyToClipboard'
 export interface ICopyIconProps {
   icon: string
   text: string
+  width?: number
+  height?: number
 }
-const CopyIcon: FC<ICopyIconProps> = ({ icon, text }) => {
+const CopyIcon: FC<ICopyIconProps> = ({ icon, text, width, height }) => {
   const [, copyToClipBoard] = useCopyToClipboard()
   return (
     <Img
@@ -19,8 +21,8 @@ const CopyIcon: FC<ICopyIconProps> = ({ icon, text }) => {
       onClick={() => {
         copyToClipBoard(text)
       }}
-      width={15}
-      height={15}
+      width={width ?? 15}
+      height={height ?? 15}
       cursor={'pointer'}
     />
   )

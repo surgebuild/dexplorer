@@ -315,8 +315,14 @@ export default function DetailAccount() {
                       <Tbody>
                         {allBalances.map((item, index) => (
                           <Tr key={index} color={'text-50'}>
-                            <Td>{item.denom}</Td>
-                            <Td>{item.amount}</Td>
+                            <Td>{'SURG'}</Td>
+                            <Td>
+                              {String(
+                                Math.round(
+                                  Number(item.amount) * 10e-7 * 100000
+                                ) / 100000
+                              )}
+                            </Td>
                           </Tr>
                         ))}
                       </Tbody>

@@ -84,7 +84,6 @@ export default function Transactions() {
   //       setLoadingTx(false)
   //       setTxs(formattedTxs)
   //       setTotalTxs(txsCount)
-  //       console.log(formattedTxs, 'formattedTxs')
   //     } catch (error) {
   //       setLoadingTx(false)
   //       console.error('Error fetching transactions from REST API:', error)
@@ -143,9 +142,7 @@ export default function Transactions() {
     if (!txEvent.result.data) {
       return
     }
-    console.log(txEvent, 'txEvent')
     const data = TxBody.decode(txEvent.result.data)
-    console.log(data, 'data from txevent')
     const result = extractSenderAndRecipient(txEvent)
     const tx = {
       TxEvent: txEvent,

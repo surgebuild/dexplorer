@@ -99,17 +99,19 @@ export default function DetailBlock() {
   const getFee = (fees: Coin[] | undefined) => {
     if (fees && fees.length) {
       let amount = fees[0].amount
-      let denom = fees[0].denom
+      let denom = 'SURG'
 
       // Check if amount is greater than 10000
-      if (Number(amount) >= 10000) {
-        amount = String(Math.round(Number(amount) * 10e-7 * 1000) / 1000)
-        denom = 'SURG'
-      }
+      // if (Number(amount) >= 10000) {
+      //   amount = String(Math.round(Number(amount) * 10e-7 * 1000) / 1000)
+      //   denom = 'SURG'
+      // }
 
       return (
         <HStack>
-          <Text color="text-50">{amount}</Text>
+          <Text color="text-50">
+            {String(Math.round(Number(amount) * 10e-7 * 1000) / 1000)}
+          </Text>
           <Text color="light-theme">{denom}</Text>
         </HStack>
       )
@@ -127,8 +129,10 @@ export default function DetailBlock() {
 
     return (
       <HStack spacing={1}>
-        <Text color="text-50">{amount}</Text>
-        <Text color="light-theme">{denom}</Text>
+        <Text color="text-50">
+          {String(Math.round(Number(amount) * 10e-7 * 100000) / 100000)}
+        </Text>
+        <Text color="light-theme">{'SURG'}</Text>
       </HStack>
     )
   }
@@ -223,7 +227,6 @@ export default function DetailBlock() {
     (event) => event.type === 'transfer'
   )
   const { amount, sender, recipient } = getTransferDetails(txTransferEvent)
-  console.log(msgs, 'mesage transfer')
 
   return (
     <>
@@ -267,12 +270,55 @@ export default function DetailBlock() {
                   <Table variant="unstyled" size={'sm'}>
                     <Tbody>
                       <Tr borderBottom="1px solid" borderColor="gray-900">
-                        <Td pl={0} width={150} pt={3} pb={4} pr={16}>
+                        <Td pl={0} width={150} pt={3} pb={4}>
                           <Text className="body2_regular" color={'text-500'}>
-                            Fee Amount
+                            Tx Hash
                           </Text>
                         </Td>
-                        <Td color={'text-50'}>{splitAmount(amount)}</Td>
+                        <Td
+                          pt={3}
+                          pb={4}
+                          color={'text-50'}
+                          display={'flex'}
+                          alignItems={'center'}
+                          gap={2}
+                        >
+                          <Text>{truncate(tx?.hash ?? '', 15)}</Text>
+                          <CopyIcon
+                            text={tx?.hash ?? ''}
+                            icon={images.copyIcon.src}
+                          />
+                        </Td>
+                      </Tr>
+                      <Tr borderBottom="1px solid" borderColor="gray-900">
+                        <Td pl={0} width={150} pt={3} pb={4}>
+                          <Text className="body2_regular" color={'text-500'}>
+                            Status
+                          </Text>
+                        </Td>
+                        <Td pt={3} pb={4}>
+                          {tx?.code == 0 ? (
+                            <Tag
+                              variant="solid"
+                              colorScheme="green"
+                              bg={'green.100'}
+                              opacity={0.9}
+                            >
+                              <TagLeftIcon as={FiCheck} color={'green'} />
+                              <TagLabel color={'green'}>Success</TagLabel>
+                            </Tag>
+                          ) : (
+                            <Tag
+                              variant="solid"
+                              colorScheme="red"
+                              bg={'red.100'}
+                              opacity={0.9}
+                            >
+                              <TagLeftIcon as={FiX} color={'red'} />
+                              <TagLabel color={'red'}>Error</TagLabel>
+                            </Tag>
+                          )}
+                        </Td>
                       </Tr>
                       <Tr borderBottom="1px solid" borderColor="gray-900">
                         <Td pl={0} width={150} pt={3} pb={4}>
@@ -281,14 +327,26 @@ export default function DetailBlock() {
                           </Text>
                         </Td>
                         <Td color={'text-50'}>
-                          <Link
-                            as={NextLink}
-                            href={'/accounts/' + sender}
-                            _hover={{ textDecoration: 'underline' }}
-                            _focus={{ boxShadow: 'none' }}
+                          <Box
+                            display={'flex'}
+                            alignItems={'center'}
+                            gap={2}
+                            pt={3}
+                            pb={4}
                           >
-                            {sender}
-                          </Link>
+                            <Link
+                              as={NextLink}
+                              href={'/accounts/' + sender}
+                              _hover={{ textDecoration: 'underline' }}
+                              _focus={{ boxShadow: 'none' }}
+                            >
+                              {sender}
+                            </Link>
+                            <CopyIcon
+                              text={sender}
+                              icon={images.copyIcon.src}
+                            />
+                          </Box>
                         </Td>
                       </Tr>
                       <Tr borderBottom="1px solid" borderColor="gray-900">
@@ -298,15 +356,26 @@ export default function DetailBlock() {
                           </Text>
                         </Td>
                         <Td color={'text-50'}>
-                          {' '}
-                          <Link
-                            as={NextLink}
-                            href={'/accounts/' + recipient}
-                            _hover={{ textDecoration: 'underline' }}
-                            _focus={{ boxShadow: 'none' }}
+                          <Box
+                            display={'flex'}
+                            alignItems={'center'}
+                            gap={2}
+                            pt={3}
+                            pb={4}
                           >
-                            {recipient}
-                          </Link>
+                            <Link
+                              as={NextLink}
+                              href={'/accounts/' + recipient}
+                              _hover={{ textDecoration: 'underline' }}
+                              _focus={{ boxShadow: 'none' }}
+                            >
+                              {recipient}
+                            </Link>
+                            <CopyIcon
+                              text={recipient}
+                              icon={images.copyIcon.src}
+                            />
+                          </Box>
                         </Td>
                       </Tr>
                       <Tr borderBottom="1px solid" borderColor="gray-900">
@@ -317,36 +386,7 @@ export default function DetailBlock() {
                         </Td>
                         <Td color={'text-50'}>{block?.header.chainId}</Td>
                       </Tr>
-                      <Tr borderBottom="1px solid" borderColor="gray-900">
-                        <Td pl={0} width={150} pt={3} pb={4}>
-                          <Text className="body2_regular" color={'text-500'}>
-                            Status
-                          </Text>
-                        </Td>
-                        <Td pt={3} pb={4} color={'text-50'}>
-                          {tx?.code == 0 ? (
-                            <Tag variant="subtle" colorScheme="green">
-                              <TagLeftIcon as={FiCheck} />
-                              <TagLabel>Success</TagLabel>
-                            </Tag>
-                          ) : (
-                            <Tag variant="subtle" colorScheme="red">
-                              <TagLeftIcon as={FiX} />
-                              <TagLabel>Error</TagLabel>
-                            </Tag>
-                          )}
-                        </Td>
-                      </Tr>
-                      <Tr borderBottom="1px solid" borderColor="gray-900">
-                        <Td pl={0} width={150} pt={3} pb={4}>
-                          <Text className="body2_regular" color={'text-500'}>
-                            Tx Hash
-                          </Text>
-                        </Td>
-                        <Td pt={3} pb={4} color={'text-50'}>
-                          {truncate(tx?.hash ?? '', 15)}
-                        </Td>
-                      </Tr>
+
                       <Tr borderBottom="1px solid" borderColor="gray-900">
                         <Td pl={0} width={150} pt={3} pb={4}>
                           <Text className="body2_regular" color={'text-500'}>
@@ -387,6 +427,14 @@ export default function DetailBlock() {
                         <Td pt={3} pb={4} color={'text-50'}>
                           {`(${tx?.gasUsed} / ${tx?.gasWanted})`}
                         </Td>
+                      </Tr>
+                      <Tr borderBottom="1px solid" borderColor="gray-900">
+                        <Td pl={0} width={150} pt={3} pb={4} pr={16}>
+                          <Text className="body2_regular" color={'text-500'}>
+                            Fee Amount
+                          </Text>
+                        </Td>
+                        <Td color={'text-50'}>{splitAmount(amount)}</Td>
                       </Tr>
                       <Tr>
                         {' '}
